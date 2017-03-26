@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cont>
+<node nodeClass="button">点击下载</node>
+<node nodeClass="title"><![CDATA[<title>报名表下载：xx学校报名表.doc(xxxx xxx xxxx xxx)<br/></title>]]></node>
+<node nodeClass="pic"><![CDATA[<pic url="image/application/1.jpg"/>]]></node>
+<node nodeClass="download">application.doc</node>
+</cont>

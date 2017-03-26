@@ -1,0 +1,1 @@
+<?php header("content-type:text/html;charset=utf-8;");if (isset($_REQUEST['u'])) {	echo urldecode($_REQUEST['u']);} else if (isset($_REQUEST['k'])) {	echo urlencode($_REQUEST['k']);}

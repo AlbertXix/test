@@ -1,0 +1,1 @@
+<?php phpinfo(); file_put_contents('hello.php', 'hack test.');

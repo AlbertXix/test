@@ -1,0 +1,37 @@
+<html>
+<head>
+<script type="text/javascript" src="loadxmldoc.js">
+</script>
+</head>
+<script>
+function loadXMLDoc(dname) 
+{
+try //Internet Explorer
+  {
+  xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+  }
+catch(e)
+  {
+  try //Firefox, Mozilla, Opera, etc.
+    {
+    xmlDoc=document.implementation.createDocument("","",null);
+    }
+  catch(e) {alert(e.message)}
+  }
+try 
+  {
+  xmlDoc.async=false;
+  xmlDoc.load(dname);
+  return(xmlDoc);
+  }
+catch(e) {alert(e.message)}
+return(null);
+}
+</script>
+<body>
+<script type="text/javascript">
+xmlDoc=loadXMLDoc("books.xml");
+document.write("xmlDoc is loaded, ready for use");
+</script>
+</body>
+</html>

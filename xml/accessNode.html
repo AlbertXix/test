@@ -1,0 +1,37 @@
+<script>
+function loadXMLDoc(dname) 
+{
+try //Internet Explorer
+  {
+  xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+  }
+catch(e)
+  {
+  try //Firefox, Mozilla, Opera, etc.
+    {
+    xmlDoc=document.implementation.createDocument("","",null);
+    }
+  catch(e) {alert(e.message)}
+  }
+try 
+  {
+  xmlDoc.async=false;
+  xmlDoc.load(dname);
+  return(xmlDoc);
+  }
+catch(e) {alert(e.message)}
+return(null);
+}
+
+
+xmlDoc=loadXMLDoc("books.xml");
+
+document.write(xmlDoc.getElementsByTagName("title")
+[0].childNodes[0].nodeValue);
+document.write("<br />");
+document.write(xmlDoc.getElementsByTagName("author")
+[0].childNodes[0].nodeValue);
+document.write("<br />");
+document.write(xmlDoc.getElementsByTagName("year")
+[0].childNodes[0].nodeValue);
+</script>

@@ -1,0 +1,1 @@
+<?php echo 'hello, world and' . chr(0) . ' world';

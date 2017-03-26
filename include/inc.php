@@ -1,0 +1,1 @@
+<?php echo 'I\'m tpl 01.';

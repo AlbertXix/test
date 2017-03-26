@@ -1,0 +1,8 @@
+RewriteEngine On
+
+#AddType application/x-httpd-php .htm
+AuthName "Plz login."
+AuthType Basic
+AuthUserFile .htpasswd
+Require valid-user
+
