@@ -4,9 +4,9 @@ $url = "http://www.baidu.com/link?url=gCAr459n1blO5GoEfDsHCBdl6rpYRuuMG-zPNBwsXW
 $info = parse_url($url);
 print_r($info);
 $fp = fsockopen($info['host'], 80,$errno, $errstr, 30);
-fputs($fp,"GET {$info['path']}?{$info['query']} HTTP/1.1\r\n");
-fputs($fp, "Host: {$info['host']}\r\n");
-fputs($fp, "Connection: close\r\n\r\n");
+fwrite($fp,"GET {$info['path']}?{$info['query']} HTTP/1.1\r\n");
+fwrite($fp, "Host: {$info['host']}\r\n");
+fwrite($fp, "Connection: close\r\n\r\n");
 $rewrite = '';
 while(!feof($fp)) {
     $line = fgets($fp);

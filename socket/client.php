@@ -1,7 +1,4 @@
 <?php 
-// socket客户端
-
-set_time_limit(0);
 
 $serverIp = '127.0.0.1';
 $serverPort = 9999;
@@ -12,21 +9,31 @@ if (!socket_connect($sockClient, $serverIp, $serverPort)){
 	socket_clear_error();
 	exit($message . ' error: ' . socket_strerror($errid));
 }
-echo $message . 'OK!' . PHP_EOL;
-fwrite(STDOUT, 'What\' your name: ');
-$user = fgets(STDIN);
-fwrite(STDOUT, "welcome, $user");
-while(fgets(STDIN) != 'exit'){
-	$buffer = $user . ': ' . fread(STDIN, 1024) . PHP_EOL;
-	socket_send($sockClient, $buffer, strlen($buffer), 0);
-	while ($buffer = socket_read($sockClient, 1024, PHP_NORMAL_READ)) {
-		socket_write($sockClient, $buffer, strlen($buffer));
-	}
 
-	if (fgets(STDIN) == 'exit') { 
-		echo('Closing the connect...');
-		socket_close($sockClient);
-		exit('OK!');
+socket_set_option($sockClient, SOL_SOCKET, SO_REUSEADDR, 1);
+// socket_set_nonblock($sockClient);
+
+echo $message . 'OK!' . PHP_EOL;
+fwrite(STDOUT, 'What\'s your name: ');
+$user = fgets(STDIN);
+// fwrite(STDOUT, "welcome, $user");
+if (! socket_write($sockClient, 'USERNAME|' . $user))
+	exit('Send username faild ' . socket_strerror(socket_last_error($sockClient)));
+// $echo_message = socket_read($sockClient, 1024);
+// if ($echo_message) echo $echo_message . PHP_EOL;
+
+do {
+	$buffer = socket_read($sockClient, 1024);
+	echo $buffer;
+
+	echo 'You say: ';
+	$buffer = $user . ': ' . fgets(STDIN);
+	// socket_send($sockClient, $buffer, strlen($buffer), 0);
+	if (! socket_write($sockClient, $buffer)){
+		exit(socket_strerror(socket_last_error()));
 	}
-}
+} while(fgets(STDIN) != 'exit');
+
+echo('Closing the connect...');
+exit('OK!');
 socket_close($sockClient);
