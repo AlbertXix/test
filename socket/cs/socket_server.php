@@ -1,22 +1,22 @@
 <?php 
-define('HOST', '192.168.1.115');
+define('HOST', '127.0.0.1');
 define('PORT', 9999);
 
 $sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 if (! $sock) exit_socket_error($sock);
 
+// socket_set_nonblock($sock);
 socket_set_option($sock, SOL_SOCKET, SO_REUSEADDR, 1);
 
 if (! socket_bind($sock, HOST, PORT)) exit_socket_error($sock);
 
 if (! socket_listen($sock, 2018)) exit_socket_error($sock);
 
-socket_set_nonblock($sock);
 
 echo 'Host: ' . HOST, ', Port: ' . PORT . PHP_EOL;
 echo 'Listening...' . PHP_EOL;
 
-$arr_sock = []; 
+$clients = [ $sock ]; 
 $buff = ''; 
 $echo_message = '';
 $username = 'Anonymous';
@@ -24,30 +24,32 @@ $read = [];
 $write =  $except = NULL;
 
 while (true){
-    $conn = socket_accept($sock);
-    if (is_resource($conn)){
-        // socket_set_nonblock($conn);
-        $read[] = $conn;
-    } else {
+    $read = [ $sock ];
+
+    if (socket_select($read, $write, $except, 3)  === false){
         continue;
     }
 
-    // var_dump($conn);
-
-    if (socket_select($read, $write, $except, 3)  == false){
+    $conn = socket_accept($sock);
+    if (is_resource($conn)){
+        // socket_set_nonblock($conn);
+        // if (! in_array($conn, $clients)) $clients[] = $conn;
+    } else {
         continue;
     }
 
     if (socket_getpeername($conn, $client_host, $client_port)){
         echo 'Client ' . $client_host . ': ' . $client_port . ' connected.' . PHP_EOL;
+        socket_write($conn, 'Welcome ' . $client_host);
     }
 
     // $buf_len = socket_recv($conn, $message, 1024, MSG_OOB);
-    $message = trim(@socket_read($conn, 1024, PHP_NORMAL_READ));
-    if (empty($message)) continue;
+    $message = @socket_read($conn, 1024, PHP_NORMAL_READ);
+    if ($message === false) {
+        echo 'Client ' . $client_host . ': ' . $client_port . ' disconnected.' . PHP_EOL;
+        continue;
+    }
     
-    broadcast_message($read, $message); continue;
-
     if (strpos($message, '|')){
         $arr_message = explode('|', $message);
         if ($arr_message[0] == 'USERNAME'){
@@ -76,9 +78,10 @@ function exit_socket_error($socket = NULL){
     exit(socket_strerror(socket_last_error($socket)) . PHP_EOL);
 }
 
-function broadcast_message($arr_sock, $message){
-    foreach ($arr_sock as $sock){
-        socket_write($sock, $message, strlen($message));
+function broadcast_message($clients, $message){
+    foreach ($clients as $sock){
+        if (is_resource($sock) && @socket_read($sock, 1024) !== false)
+            socket_write($sock, $message, strlen($message));
     }
 }
 
