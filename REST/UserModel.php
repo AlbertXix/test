@@ -11,7 +11,7 @@ class UserModel
 
     public $userInfo = [
         1 => ['name' => 'xilibo', 'age' => 32, 'sex' => 'male'],
-        2 => ['name' => 'chengting', 'age' => 26, 'sex' => 'female']
+        2 => ['name' => 'xlb', 'age' => 26, 'sex' => 'male']
     ];
 
     public function findOne($id){
