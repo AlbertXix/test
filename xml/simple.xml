@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<clients>
+    <client from="CN">
+        <name>iOS</name>
+        <total>1234</total>
+    </client>
+    <client from="US">
+        <name>android</name>
+        <total>12345</total>
+    </client>
+</clients>
