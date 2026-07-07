@@ -95,6 +95,13 @@ class DanjipaiCollector extends BaseCollector
         }
 
         $html = preg_replace(
+            '/<(?:h2|p)[^>]*>\s*中文名称[^<]*(?:<br\s*\/?>(?:[^<]*)?){5,}发行日期[^<]*<\/(?:h2|p)>\s*/i',
+            '',
+            $html,
+            1
+        );
+
+        $html = preg_replace(
             '/<(?:h2|p)[^>]*>(?:[^<]*<br\s*\/?>\s*){3,}[^<]*<\/(?:h2|p)>\s*(?:<(?:h2|p)[^>]*>\s*<br\s*\/?>\s*<\/(?:h2|p)>\s*)*/i',
             '',
             $html,
@@ -113,11 +120,17 @@ class DanjipaiCollector extends BaseCollector
     {
         $meta = [];
 
+        $description = $this->extractor->extractFirst($detailHtml, '.description .detail p');
+        if ($description) {
+            $meta['description'] = trim($description);
+        }
+
         $inlineFields = [
-            '游戏类型' => 'gameType',
             '游戏大小' => 'gameSize',
             '游戏语言' => 'gameLanguage',
             '运行环境' => 'runtimeEnv',
+            '更新时间' => 'updatedTime',
+            '英文名称' => 'titleEn',
         ];
 
         $crawler = new \Symfony\Component\DomCrawler\Crawler($detailHtml);
@@ -138,8 +151,36 @@ class DanjipaiCollector extends BaseCollector
             $meta['gameSize'] = $this->convertToMb($meta['gameSize']);
         }
 
+        if (!isset($meta['titleEn'])) {
+            $title = $this->extractor->extractFirst($detailHtml, 'h1.title');
+            if ($title && preg_match('#\s*/\s*(.+)\s*$#', $title, $m)) {
+                $meta['titleEn'] = trim($m[1]);
+            }
+        }
+
+        $articleHtml = $this->extractor->extractFirstHtml($detailHtml, 'article.articleDetailGroup');
+        if ($articleHtml && preg_match('/类型\s*:\s*(.+?)(?:<\/(?:p|h2|div)>|<br\s*\/?>|$)/iu', $articleHtml, $m)) {
+            $meta['gameType'] = trim(strip_tags($m[1]));
+        }
+
+        if (!isset($meta['gameType']) && preg_match('/<div[^>]*id="game_area_description"[^>]*>(.*?)<\/div>\s*<\/div>\s*<\/div>/is', $detailHtml, $section)) {
+            if (preg_match('/类型\s*:\s*(.+?)(?:<\/(?:p|h2|div)>|<br\s*\/?>|$)/iu', $section[1], $m)) {
+                $meta['gameType'] = trim(strip_tags($m[1]));
+            }
+        }
+
+        if (isset($meta['gameType'])) {
+            $meta['gameType'] = preg_replace('/\s*,\s*/', ', ', $meta['gameType']);
+        }
+
+        $meta['screenshots'] = $this->extractScreenshots($detailHtml);
+
+        $coverHtml = $this->extractor->extractFirstHtml($detailHtml, '.thumbBox img');
+        if ($coverHtml && preg_match('/src="([^"]+)"/i', $coverHtml, $m)) {
+            $meta['coverImage'] = $m[1];
+        }
+
         if (preg_match('/<div[^>]*id="game_area_description"[^>]*>(.*?)<\/div>\s*<\/div>\s*<\/div>/is', $detailHtml, $section)) {
-            $innerHtml = $section[1];
             $steamFields = [
                 '开发商' => 'developer',
                 '发行商' => 'publisher',
@@ -147,13 +188,38 @@ class DanjipaiCollector extends BaseCollector
                 '发行日期' => 'releaseDate',
             ];
             foreach ($steamFields as $label => $key) {
-                if (preg_match('/' . preg_quote($label, '/') . '\s*:\s*(.+?)(?:<\/(?:p|h2|div)>|<br\s*\/?>|$)/iu', $innerHtml, $m)) {
+                if (preg_match('/' . preg_quote($label, '/') . '\s*:\s*(.+?)(?:<\/(?:p|h2|div)>|<br\s*\/?>|$)/iu', $section[1], $m)) {
                     $meta[$key] = trim(strip_tags($m[1]));
                 }
             }
         }
 
         return $meta;
+    }
+
+    protected function getItemDate(string $detailHtml): ?string
+    {
+        $meta = $this->extractMeta($detailHtml);
+        $updatedTime = $meta['updatedTime'] ?? '';
+        if ($updatedTime === '') {
+            return null;
+        }
+
+        $updatedTime = preg_replace('/\s+\d{1,2}:\d{2}(:\d{2})?$/', '', trim($updatedTime));
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $updatedTime)) {
+            return $updatedTime;
+        }
+
+        return null;
+    }
+
+    private function extractScreenshots(string $detailHtml): array
+    {
+        $html = $this->extractor->extractFirstHtml($detailHtml, '.screenshot');
+        if ($html && preg_match_all('/<img[^>]+src="([^"]+)"/i', $html, $m)) {
+            return $m[1];
+        }
+        return [];
     }
 
     private function convertToMb(string $size): float

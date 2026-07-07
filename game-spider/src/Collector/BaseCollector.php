@@ -9,11 +9,49 @@ abstract class BaseCollector implements CollectorInterface
 {
     protected PageFetcher $fetcher;
     protected ContentExtractor $extractor;
+    protected ?string $minDate = null;
+    protected ?int $startPage = null;
+    protected ?int $endPage = null;
+    protected ?string $category = null;
 
     public function __construct(PageFetcher $fetcher, ContentExtractor $extractor)
     {
         $this->fetcher = $fetcher;
         $this->extractor = $extractor;
+    }
+
+    public function setMinDate(?string $date): void
+    {
+        $this->minDate = $date;
+    }
+
+    public function setPageRange(?int $startPage, ?int $endPage): void
+    {
+        $this->startPage = $startPage;
+        $this->endPage = $endPage;
+    }
+
+    public function setCategory(?string $category): void
+    {
+        $this->category = $category;
+    }
+
+    protected function getCategoriesForScrape(): array
+    {
+        if ($this->category !== null) {
+            $label = $this->getCategories()[$this->category] ?? null;
+            if ($label === null) {
+                echo "  Warning: unknown category '{$this->category}', skipping\n";
+                return [];
+            }
+            return [$this->category => $label];
+        }
+        return $this->getCategories();
+    }
+
+    protected function getItemDate(string $detailHtml): ?string
+    {
+        return null;
     }
 
     protected function extractAdditionalData(string $detailHtml): array
@@ -24,16 +62,23 @@ abstract class BaseCollector implements CollectorInterface
     protected function sanitizeContent(string $raw): string
     {
         $placeholders = [];
+
         $processed = preg_replace_callback('/<img[^>]+>/i', function ($m) use (&$placeholders) {
             $key = "\x00IMG" . count($placeholders) . "\x00";
             $placeholders[$key] = $m[0];
             return $key;
         }, $raw);
 
+        $processed = preg_replace_callback('/<video[^>]*>.*?<\/video>/is', function ($m) use (&$placeholders) {
+            $key = "\x00VID" . count($placeholders) . "\x00";
+            $placeholders[$key] = $m[0];
+            return $key;
+        }, $processed);
+
         $content = htmlspecialchars($processed, ENT_QUOTES);
 
-        foreach ($placeholders as $key => $imgTag) {
-            $content = str_replace($key, $imgTag, $content);
+        foreach ($placeholders as $key => $tag) {
+            $content = str_replace($key, $tag, $content);
         }
 
         return $content;
@@ -43,10 +88,10 @@ abstract class BaseCollector implements CollectorInterface
     {
         $results = [];
 
-        foreach ($this->getCategories() as $category => $label) {
+        foreach ($this->getCategoriesForScrape() as $category => $label) {
             echo "[{$this->getName()}] Starting category: {$label} ({$category})\n";
 
-            $page = 1;
+            $page = $this->startPage ?? 1;
             $totalPages = null;
 
             while (true) {
@@ -76,6 +121,14 @@ abstract class BaseCollector implements CollectorInterface
                             $title = $this->extractTitle($detailHtml);
                             $content = $this->extractContent($detailHtml);
 
+                            if ($this->minDate !== null) {
+                                $itemDate = $this->getItemDate($detailHtml);
+                                if ($itemDate !== null && $itemDate < $this->minDate) {
+                                    echo "    Skipping (date {$itemDate} < {$this->minDate}): {$title}\n";
+                                    continue;
+                                }
+                            }
+
                             if ($title) {
                                 $results[] = array_merge([
                                     'site' => $this->getName(),
@@ -91,7 +144,8 @@ abstract class BaseCollector implements CollectorInterface
                     }
 
                     $page++;
-                    if ($totalPages !== null && $page > $totalPages) {
+                    $maxPage = $this->endPage ?? $totalPages;
+                    if ($maxPage !== null && $page > $maxPage) {
                         break;
                     }
                 } catch (\Exception $e) {

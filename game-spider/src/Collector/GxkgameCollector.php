@@ -89,13 +89,12 @@ class GxkgameCollector extends BaseCollector
     {
         $results = [];
 
-        foreach ($this->getCategories() as $category => $label) {
+        foreach ($this->getCategoriesForScrape() as $category => $label) {
             echo "[{$this->getName()}] Starting category: {$label} ({$category})\n";
 
-            $page = 1;
-            $hasMore = true;
+            $page = $this->startPage ?? 1;
 
-            while ($hasMore) {
+            while (true) {
                 echo "  Fetching page {$page}...\n";
 
                 try {
@@ -106,7 +105,6 @@ class GxkgameCollector extends BaseCollector
                     $totalPages = $json['data']['totalPages'] ?? 0;
 
                     if (empty($items)) {
-                        $hasMore = false;
                         break;
                     }
 
@@ -124,6 +122,20 @@ class GxkgameCollector extends BaseCollector
                             $title = $detail['data']['title'] ?? '';
                             $rawContent = $detail['data']['contents'] ?? $detail['data']['content'] ?? '';
 
+                            $screenshots = $detail['data']['screenshots'] ?? $detail['data']['images'] ?? [];
+                            if (empty($screenshots) && is_string($rawContent)) {
+                                $screenshots = $this->extractScreenshots($rawContent);
+                            }
+
+                            if ($this->minDate !== null) {
+                                $publishDate = $detail['data']['publishDate'] ?? '';
+                                $itemDate = $this->normalizeDate($publishDate);
+                                if ($itemDate !== null && $itemDate < $this->minDate) {
+                                    echo "    Skipping (date {$itemDate} < {$this->minDate}): {$title}\n";
+                                    continue;
+                                }
+                            }
+
                             if ($title) {
                                 $results[] = [
                                     'site' => $this->getName(),
@@ -131,6 +143,12 @@ class GxkgameCollector extends BaseCollector
                                     'url' => $detailUrl . '?' . http_build_query(['id' => $id]),
                                     'title' => $title,
                                     'content' => is_string($rawContent) ? $this->sanitizeContent($rawContent) : '',
+                                    'coverImage' => $detail['data']['imglink'] ?? '',
+                                    'screenshots' => $screenshots,
+                                    'releaseDate' => $detail['data']['publishDate'] ?? '',
+                                    'developer' => $detail['data']['developer'] ?? '',
+                                    'series' => $detail['data']['series'] ?? '',
+                                    'titleEn' => $detail['data']['titleEn'] ?? '',
                                 ];
                             }
                         } catch (\Exception $e) {
@@ -138,14 +156,14 @@ class GxkgameCollector extends BaseCollector
                         }
                     }
 
-                    if ($page >= $totalPages) {
-                        $hasMore = false;
-                    } else {
-                        $page++;
+                    $page++;
+                    $maxPage = $this->endPage ?? $totalPages;
+                    if ($maxPage > 0 && $page > $maxPage) {
+                        break;
                     }
                 } catch (\Exception $e) {
                     echo "  Error on page {$page}: {$e->getMessage()}\n";
-                    $hasMore = false;
+                    break;
                 }
             }
 
@@ -153,5 +171,46 @@ class GxkgameCollector extends BaseCollector
         }
 
         return $results;
+    }
+
+    protected function getItemDate(string $detailHtml): ?string
+    {
+        $data = json_decode($detailHtml, true);
+        $publishDate = $data['data']['publishDate'] ?? '';
+        return $this->normalizeDate($publishDate);
+    }
+
+    private function normalizeDate(string $date): ?string
+    {
+        if ($date === '') {
+            return null;
+        }
+
+        $date = preg_replace('/\s+\d{1,2}:\d{2}(:\d{2})?$/', '', trim($date));
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $date;
+        }
+
+        return null;
+    }
+
+    public function extractScreenshots(string $html): array
+    {
+        $screenshots = [];
+        if (preg_match_all('/<img[^>]+src="([^"]+)"[^>]*>/i', $html, $imgs)) {
+            $crawler = new \Symfony\Component\DomCrawler\Crawler($html);
+            $nodes = $crawler->filter('.ql-align-center img');
+            $found = [];
+            foreach ($nodes as $node) {
+                if ($node instanceof \DOMElement) {
+                    $src = $node->getAttribute('src');
+                    if ($src) {
+                        $found[] = $src;
+                    }
+                }
+            }
+            $screenshots = $found;
+        }
+        return $screenshots;
     }
 }

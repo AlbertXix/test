@@ -10,6 +10,7 @@ use GameSpider\Extractor\ContentExtractor;
 use GameSpider\Collector\DanjipaiCollector;
 use GameSpider\Collector\GxkgameCollector;
 use GameSpider\Exporter\JsonExporter;
+use GameSpider\Exporter\MysqlExporter;
 
 echo "========================================\n";
 echo "  Game Spider - Web Scraper\n";
@@ -77,7 +78,7 @@ if ($mode === 'test') {
             if (method_exists($collector, 'extractMeta')) {
                 $meta = $collector->extractMeta($detailHtml);
                 foreach ($meta as $k => $v) {
-                    echo "  {$k}: {$v}\n";
+                    echo "  {$k}: " . (is_array($v) ? '[' . implode(', ', $v) . ']' : $v) . "\n";
                 }
             }
         }
@@ -101,16 +102,69 @@ if ($mode === 'test') {
             $detailJson = $container->get(PageFetcher::class)->fetch($detailApiUrl);
             $title = $collector->extractTitle($detailJson);
             $content = $collector->extractContent($detailJson);
+
+            $data = json_decode($detailJson, true);
+            $rawContent = $data['data']['contents'] ?? $data['data']['content'] ?? '';
+            $screenshots = is_string($rawContent) ? $collector->extractScreenshots($rawContent) : [];
+            $coverImage = $data['data']['imglink'] ?? '';
+            $releaseDate = $data['data']['publishDate'] ?? '';
+            $developer = $data['data']['developer'] ?? '';
+            $series = $data['data']['series'] ?? '';
+
             echo "  sourceUrl: {$detailApiUrl}\n";
             echo "  Title: {$title}\n";
             echo "  Content: " . mb_substr(strip_tags($content), 0, 150) . "...\n";
+            echo "  CoverImage: {$coverImage}\n";
+            echo "  ReleaseDate: {$releaseDate}\n";
+            echo "  Developer: {$developer}\n";
+            echo "  Series: {$series}\n";
+            echo "  Screenshots: " . (empty($screenshots) ? '(none)' : '[' . implode(', ', $screenshots) . ']') . "\n";
         }
     }
 } elseif ($mode === 'scrape') {
     $site = $argv[2] ?? 'all';
-    $outputDir = $argv[3] ?? __DIR__ . '/output';
+    $outputTarget = $argv[3] ?? 'output';
+
+    $minDate = null;
+    $startPage = null;
+    $endPage = null;
+    $category = null;
+
+    for ($i = 2; $i < count($argv); $i++) {
+        if ($argv[$i] === '--start-page' && isset($argv[$i + 1])) {
+            $startPage = (int) $argv[$i + 1];
+            $i++;
+        } elseif ($argv[$i] === '--end-page' && isset($argv[$i + 1])) {
+            $endPage = (int) $argv[$i + 1];
+            $i++;
+        } elseif ($argv[$i] === '--category' && isset($argv[$i + 1])) {
+            $category = $argv[$i + 1];
+            $i++;
+        } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $argv[$i])) {
+            $minDate = $argv[$i];
+        }
+    }
+
+    if ($minDate !== null) {
+        echo "  Filter: only items >= {$minDate}\n";
+    }
+    if ($startPage !== null || $endPage !== null) {
+        echo "  Page range: " . ($startPage ?? 1) . " - " . ($endPage ?? 'end') . "\n";
+    }
+    if ($category !== null) {
+        echo "  Category: {$category}\n";
+    }
 
     $sites = $site === 'all' ? ['danjipai', 'gxkgame'] : [$site];
+
+    $exporter = null;
+    if ($outputTarget === 'db') {
+        $dbConfig = require __DIR__ . '/src/Config/database.config.php';
+        $pdo = new \PDO($dbConfig['dsn'], $dbConfig['username'], $dbConfig['password']);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $exporter = new MysqlExporter($pdo);
+        echo "  Export target: database ({$dbConfig['dsn']})\n";
+    }
 
     foreach ($sites as $s) {
         if (!$container->has($s)) {
@@ -120,24 +174,40 @@ if ($mode === 'test') {
 
         echo "\n--- Scraping {$s} ---\n";
         $collector = $container->get($s);
+        if ($minDate !== null) {
+            $collector->setMinDate($minDate);
+        }
+        if ($startPage !== null || $endPage !== null) {
+            $collector->setPageRange($startPage, $endPage);
+        }
         $startTime = microtime(true);
         $results = $collector->scrape();
         $elapsed = round(microtime(true) - $startTime, 2);
         echo "\n--- {$s} complete: " . count($results) . " items in {$elapsed}s ---\n";
 
-        $exporter = new JsonExporter();
-        $files = $exporter->exportBySite($results, $outputDir);
-        foreach ($files as $f) {
-            echo "  Exported: {$f}\n";
+        if ($exporter !== null) {
+            $inserted = $exporter->exportBySite($results);
+            echo "  Inserted into database: {$inserted} games\n";
+        } else {
+            $jsonExporter = new JsonExporter();
+            $files = $jsonExporter->exportBySite($results, $outputTarget);
+            foreach ($files as $f) {
+                echo "  Exported: {$f}\n";
+            }
         }
     }
 } else {
     echo "Usage:\n";
     echo "  php run.php test <site> <category>    Test extraction for one category\n";
-    echo "  php run.php scrape [site] [outdir]    Full scrape (site: danjipai|gxkgame|all)\n";
+    echo "  php run.php scrape [site] [outdir|db] Full scrape (site: danjipai|gxkgame|all)\n";
     echo "\nExamples:\n";
     echo "  php run.php test danjipai RPG\n";
     echo "  php run.php test gxkgame jsby\n";
     echo "  php run.php scrape all output/\n";
-    echo "  php run.php scrape danjipai output/\n";
+    echo "  php run.php scrape all db\n";
+    echo "  php run.php scrape all db 2026-06-01\n";
+    echo "  php run.php scrape danjipai db\n";
+    echo "  php run.php scrape danjipai output/ 2026-01-01\n";
+    echo "  php run.php scrape all db --start-page 5 --end-page 10\n";
+    echo "  php run.php scrape gxkgame db 2026-06-01 --start-page 1 --end-page 3\n";
 }
