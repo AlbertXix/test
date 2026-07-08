@@ -207,15 +207,31 @@ class MysqlExporter
         $fileId = $this->idGenerator->generate();
         $destPath = rtrim($destDir, '/') . '/' . $fileId . '.' . $ext;
 
+        for ($attempt = 1; $attempt <= 2; $attempt++) {
+            if ($this->doDownload($url, $destPath)) {
+                return $destPath;
+            }
+            if ($attempt === 1) {
+                echo "    Retrying: {$url}\n";
+            }
+        }
+
+        echo "    Warning: failed to download {$url}\n";
+        @unlink($destPath);
+        return null;
+    }
+
+    private function doDownload(string $url, string $destPath): bool
+    {
         $ch = curl_init($url);
         if ($ch === false) {
-            return null;
+            return false;
         }
 
         $fp = fopen($destPath, 'wb');
         if (!$fp) {
             curl_close($ch);
-            return null;
+            return false;
         }
 
         curl_setopt_array($ch, [
@@ -230,13 +246,7 @@ class MysqlExporter
         curl_close($ch);
         fclose($fp);
 
-        if ($httpCode !== 200 || $error !== '' || !file_exists($destPath) || filesize($destPath) === 0) {
-            @unlink($destPath);
-            echo "    Warning: failed to download {$url} (HTTP {$httpCode})\n";
-            return null;
-        }
-
-        return $destPath;
+        return $httpCode === 200 && $error === '' && file_exists($destPath) && filesize($destPath) > 0;
     }
 
     private function resolveImageUrl(string $url, string $site): string

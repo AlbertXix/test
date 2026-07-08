@@ -137,7 +137,7 @@ class DanjipaiCollector extends BaseCollector
         foreach ($labels as $label) {
             $span = $label->getElementsByTagName('span')->item(0);
             $strong = $label->getElementsByTagName('strong')->item(0);
-                if ($span && $strong) {
+            if ($span && $strong) {
                 $key = rtrim(trim($span->textContent), ':');
                 $val = trim($strong->textContent);
                 if (isset($inlineFields[$key])) {
@@ -193,10 +193,8 @@ class DanjipaiCollector extends BaseCollector
 
         $coverHtml = $this->extractor->extractFirstHtml($detailHtml, '.thumbBox img');
         if ($coverHtml && preg_match('/src="([^"]+)"/i', $coverHtml, $m)) {
-            $meta['coverImage'] = trim(urldecode($m[1]));
-            if (stripos($meta['coverImage'], '/') === 0) {
-                $meta['coverImage'] = self::BASE_URL . $meta['coverImage'];
-            }
+            // $meta['coverImage'] = trim(urldecode($m[1]));
+            $meta['coverImage'] = $this->fullImageUrl($m[1], self::BASE_URL);
         }
 
         if (preg_match('/<div[^>]*id="game_area_description"[^>]*>(.*?)<\/div>\s*<\/div>\s*<\/div>/is', $detailHtml, $section)) {
@@ -238,12 +236,8 @@ class DanjipaiCollector extends BaseCollector
         if ($html && preg_match_all('/<img[^>]+src="([^"]+)"/i', $html, $m)) {
             // return $m[1];
             if (!empty($m[1])) {
-                // return array_map(fn($item) => trim(urldecode($item)), $m[1]);
                 return array_map(function($item) {
-                    $item = trim(urldecode($item));
-                    if (stripos($item , '/') === 0) {
-                        $item  = self::BASE_URL . $item ;
-                    }
+                    return $this->fullImageUrl($item, self::BASE_URL);
                 }, $m[1]);
 
                 
@@ -266,4 +260,21 @@ class DanjipaiCollector extends BaseCollector
         }
         return 0;
     }
+
+    // protected function fullImageUrl(string $imageUrl, string baseUrl = ''): string
+    // {
+    //     $fullImageUrl = trim(urldecode($imageUrl));
+    //     $ext = pathinfo(parse_url($fullImageUrl, PHP_URL_PATH), PATHINFO_EXTENSION);
+    //     if (strtolower($ext) === 'j') {
+    //         $fullImageUrl = str_ireplace($fullImageUrl, '.j', '.jpg');
+    //     }
+    //     if (stristr($fullImageUrl, '?t=')) {
+    //         $fullImageUrl = substr($fullImageUrl, 0, stripos($fullImageUrl, '?t='));
+    //     }
+    //     if (strpos($fullImageUrl, '/') === 0) {
+    //         $fullImageUrl = self::BASE_URL . $fullImageUrl;
+    //     }
+
+    //     return $fullImageUrl;
+    // }
 }

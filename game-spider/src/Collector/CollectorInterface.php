@@ -19,4 +19,6 @@ interface CollectorInterface
     public function extractContent(string $detailHtml): string;
 
     public function scrape(): array;
+
+    public function fullImageUrl(string $imageUrl, string $baseUrl = ''): string;
 }
