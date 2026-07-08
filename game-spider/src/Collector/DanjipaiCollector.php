@@ -84,7 +84,7 @@ class DanjipaiCollector extends BaseCollector
         if ($title) {
             $title = preg_replace('#\s*/\s*[^/]+\s*$#', '', $title);
         }
-        return trim($title ?? '');
+        return $this->wrapTitle(trim($title ?? ''));
     }
 
     public function extractContent(string $detailHtml): string
@@ -130,7 +130,6 @@ class DanjipaiCollector extends BaseCollector
             '游戏语言' => 'gameLanguage',
             '运行环境' => 'runtimeEnv',
             '更新时间' => 'updatedTime',
-            '英文名称' => 'titleEn',
         ];
 
         $crawler = new \Symfony\Component\DomCrawler\Crawler($detailHtml);
@@ -152,9 +151,26 @@ class DanjipaiCollector extends BaseCollector
         }
 
         if (!isset($meta['titleEn'])) {
-            $title = $this->extractor->extractFirst($detailHtml, 'h1.title');
-            if ($title && preg_match('#\s*/\s*(.+)\s*$#', $title, $m)) {
-                $meta['titleEn'] = trim($m[1]);
+            $articleHtml = $this->extractor->extractFirstHtml($detailHtml, 'article.articleDetailGroup');
+            if ($articleHtml && preg_match('/英文名称\s*[：:]\s*(.+?)(?:<br\s*\/?>|<\/(?:p|h2|div)>|$)/iu', $articleHtml, $m)) {
+                $rawEn = trim(strip_tags($m[1]));
+                $english = preg_replace('/[^a-zA-Z0-9\s\'\-:\.!,&+()]/', '', $rawEn);
+                $english = trim(preg_replace('/\s+/', ' ', $english));
+                if ($english !== '') {
+                    $meta['titleEn'] = "《{$english}》";
+                }
+            }
+        }
+
+        if (!isset($meta['titleEn'])) {
+            $rawTitle = $this->extractor->extractFirst($detailHtml, 'h1.title');
+            if ($rawTitle && preg_match('#\s*/\s*(.+)\s*$#', $rawTitle, $m)) {
+                $rawEn = trim($m[1]);
+                $english = preg_replace('/[^a-zA-Z0-9\s\'\-:\.!,&+()]/', '', $rawEn);
+                $english = trim(preg_replace('/\s+/', ' ', $english));
+                if ($english !== '') {
+                    $meta['titleEn'] = "《{$english}》";
+                }
             }
         }
 

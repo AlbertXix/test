@@ -59,6 +59,27 @@ abstract class BaseCollector implements CollectorInterface
         return [];
     }
 
+    protected function wrapTitle(string $title): string
+    {
+        if ($title !== '' && !str_contains($title, '《')) {
+            return "《{$title}》";
+        }
+        return $title;
+    }
+
+    protected function extractEnglishFromTitle(string $title): string
+    {
+        if (preg_match('/《([^》]+)》/', $title, $m)) {
+            $inside = $m[1];
+            $english = preg_replace('/[^a-zA-Z0-9\s\'\-:\.!,&+()]/', '', $inside);
+            $english = trim(preg_replace('/\s+/', ' ', $english));
+            if ($english !== '') {
+                return "《{$english}》";
+            }
+        }
+        return '';
+    }
+
     protected function sanitizeContent(string $raw): string
     {
         $placeholders = [];
@@ -84,7 +105,7 @@ abstract class BaseCollector implements CollectorInterface
         return $content;
     }
 
-    public function scrape(): array
+    public function scrape(?callable $pageHandler = null): array
     {
         $results = [];
 
@@ -114,6 +135,8 @@ abstract class BaseCollector implements CollectorInterface
                         break;
                     }
 
+                    $pageResults = [];
+
                     foreach ($detailUrls as $url) {
                         try {
                             echo "    Fetching detail: {$url}\n";
@@ -130,17 +153,27 @@ abstract class BaseCollector implements CollectorInterface
                             }
 
                             if ($title) {
-                                $results[] = array_merge([
+                                $item = array_merge([
                                     'site' => $this->getName(),
                                     'category' => $label,
                                     'url' => $url,
                                     'title' => $title,
                                     'content' => $content,
                                 ], $this->extractAdditionalData($detailHtml));
+
+                                if ($pageHandler !== null) {
+                                    $pageResults[] = $item;
+                                } else {
+                                    $results[] = $item;
+                                }
                             }
                         } catch (\Exception $e) {
                             echo "    Error fetching detail {$url}: {$e->getMessage()}\n";
                         }
+                    }
+
+                    if ($pageHandler !== null && !empty($pageResults)) {
+                        $pageHandler($pageResults);
                     }
 
                     $page++;

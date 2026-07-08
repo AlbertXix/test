@@ -180,21 +180,32 @@ if ($mode === 'test') {
         if ($startPage !== null || $endPage !== null) {
             $collector->setPageRange($startPage, $endPage);
         }
+        if ($category !== null) {
+            $collector->setCategory($category);
+        }
         $startTime = microtime(true);
-        $results = $collector->scrape();
-        $elapsed = round(microtime(true) - $startTime, 2);
-        echo "\n--- {$s} complete: " . count($results) . " items in {$elapsed}s ---\n";
 
         if ($exporter !== null) {
-            $inserted = $exporter->exportBySite($results);
-            echo "  Inserted into database: {$inserted} games\n";
+            $pdo->beginTransaction();
+            $pageHandler = function ($pageItems) use ($exporter, $pdo) {
+                $inserted = $exporter->exportBySite($pageItems);
+                echo "    Page committed: {$inserted} games\n";
+                $pdo->commit();
+                $pdo->beginTransaction();
+            };
+            $collector->scrape($pageHandler);
+            $pdo->commit();
         } else {
+            $results = $collector->scrape();
             $jsonExporter = new JsonExporter();
             $files = $jsonExporter->exportBySite($results, $outputTarget);
             foreach ($files as $f) {
                 echo "  Exported: {$f}\n";
             }
         }
+
+        $elapsed = round(microtime(true) - $startTime, 2);
+        echo "\n--- {$s} complete in {$elapsed}s ---\n";
     }
 } else {
     echo "Usage:\n";

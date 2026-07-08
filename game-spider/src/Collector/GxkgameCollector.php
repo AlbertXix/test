@@ -75,7 +75,7 @@ class GxkgameCollector extends BaseCollector
     public function extractTitle(string $detailHtml): string
     {
         $data = json_decode($detailHtml, true);
-        return $data['data']['title'] ?? '';
+        return $this->wrapTitle($data['data']['title'] ?? '');
     }
 
     public function extractContent(string $detailHtml): string
@@ -85,7 +85,7 @@ class GxkgameCollector extends BaseCollector
         return is_string($content) ? $this->sanitizeContent($content) : '';
     }
 
-    public function scrape(): array
+    public function scrape(?callable $pageHandler = null): array
     {
         $results = [];
 
@@ -108,6 +108,8 @@ class GxkgameCollector extends BaseCollector
                         break;
                     }
 
+                    $pageResults = [];
+
                     foreach ($items as $item) {
                         $id = $item['articleId'] ?? '';
                         if (!$id) {
@@ -119,7 +121,7 @@ class GxkgameCollector extends BaseCollector
                             $detailUrl = self::API_BASE . '/game/getDetailById';
                             $detail = $this->fetcher->fetchJson($detailUrl, ['id' => $id]);
 
-                            $title = $detail['data']['title'] ?? '';
+                            $title = $this->wrapTitle($detail['data']['title'] ?? '');
                             $rawContent = $detail['data']['contents'] ?? $detail['data']['content'] ?? '';
 
                             $screenshots = $detail['data']['screenshots'] ?? $detail['data']['images'] ?? [];
@@ -137,7 +139,7 @@ class GxkgameCollector extends BaseCollector
                             }
 
                             if ($title) {
-                                $results[] = [
+                                $resultItem = [
                                     'site' => $this->getName(),
                                     'category' => $label,
                                     'url' => $detailUrl . '?' . http_build_query(['id' => $id]),
@@ -148,12 +150,21 @@ class GxkgameCollector extends BaseCollector
                                     'releaseDate' => $detail['data']['publishDate'] ?? '',
                                     'developer' => $detail['data']['developer'] ?? '',
                                     'series' => $detail['data']['series'] ?? '',
-                                    'titleEn' => $detail['data']['titleEn'] ?? '',
+                                    'titleEn' => $this->extractEnglishFromTitle($title),
                                 ];
+                                if ($pageHandler !== null) {
+                                    $pageResults[] = $resultItem;
+                                } else {
+                                    $results[] = $resultItem;
+                                }
                             }
                         } catch (\Exception $e) {
                             echo "    Error fetching detail {$id}: {$e->getMessage()}\n";
                         }
+                    }
+
+                    if ($pageHandler !== null && !empty($pageResults)) {
+                        $pageHandler($pageResults);
                     }
 
                     $page++;

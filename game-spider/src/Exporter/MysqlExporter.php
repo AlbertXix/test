@@ -6,6 +6,9 @@ use GameSpider\Util\SnowflakeIdGenerator;
 
 class MysqlExporter
 {
+    public const UPLOAD_ROOT = '/var/upload/bocms';
+    public const RELATIVE_ROOT = '/Public/up';
+
     private \PDO $pdo;
     private SnowflakeIdGenerator $idGenerator;
 
@@ -62,25 +65,35 @@ class MysqlExporter
                 id, category_id, title, title_en, keywords, description, resource_size,
                 system_platform, home_page, source_url, developer,
                 release_date, serial,
-                score, user_give_score, click, cover_image, content,
+                score, user_give_score, click, cover_image, cover_image_local, content,
                 download_total, download_url, baidu_url, xunlei_url,
                 quark_url, created_by, updated_by
             ) VALUES (
                 :id, :category_id, :title, :title_en, :keywords, :description, :resource_size,
                 :system_platform, :home_page, :source_url, :developer,
                 :release_date, :serial,
-                :score, :user_give_score, :click, :cover_image, :content,
+                :score, :user_give_score, :click, :cover_image, :cover_image_local, :content,
                 :download_total, :download_url, :baidu_url, :xunlei_url,
                 :quark_url, :created_by, :updated_by
             )
         ');
+
+        $coverImageLocal = '';
+        $coverUrl = $item['coverImage'] ?? '';
+        if ($coverUrl !== '') {
+            $coverUrl = $this->resolveImageUrl($coverUrl, $item['site'] ?? '');
+            $local = $this->downloadImage($coverUrl, self::UPLOAD_ROOT . '/cover');
+            if ($local !== null) {
+                $coverImageLocal = $this->localToDbPath($local);
+            }
+        }
 
         $stmt->execute([
             ':id' => $gameId,
             ':category_id' => 1,
             ':title' => $item['title'] ?? '',
             ':title_en' => $item['titleEn'] ?? '',
-            ':keywords' => $item['gameType'] ?? '',
+            ':keywords' => $item['title'] ?? '',
             ':description' => $item['description'] ?? '',
             ':resource_size' => isset($item['gameSize']) ? (int) $item['gameSize'] : 0,
             ':system_platform' => $item['runtimeEnv'] ?? '',
@@ -92,7 +105,8 @@ class MysqlExporter
             ':score' => 0,
             ':user_give_score' => 0,
             ':click' => 0,
-            ':cover_image' => $item['coverImage'] ?? '',
+            ':cover_image' => $coverUrl,
+            ':cover_image_local' => $coverImageLocal,
             ':content' => $item['content'] ?? '',
             ':download_total' => 0,
             ':download_url' => '',
@@ -109,6 +123,7 @@ class MysqlExporter
 
     private function insertGameTag(int $gameId, string $gameType): void
     {
+        $gameType = str_replace(['，', '、'], ',', $gameType);
         $tags = array_map('trim', explode(',', $gameType));
         $tags = array_filter($tags, fn($t) => $t !== '');
 
@@ -138,8 +153,8 @@ class MysqlExporter
             return $cache[$tagName];
         }
 
-        $stmt = $this->pdo->prepare('SELECT id FROM bo_tag WHERE tag_name = :tag_name LIMIT 1');
-        $stmt->execute([':tag_name' => $tagName]);
+        $stmt = $this->pdo->prepare('SELECT id FROM bo_tag WHERE tag_name = :tag_name OR tag_name LIKE :tag_name_like LIMIT 1');
+        $stmt->execute([':tag_name' => $tagName, ':tag_name_like' => '%' . $tagName . '%']);
         $id = $stmt->fetchColumn();
 
         $cache[$tagName] = $id !== false ? (int) $id : null;
@@ -158,13 +173,92 @@ class MysqlExporter
             return;
         }
 
-        $stmt = $this->pdo->prepare('INSERT INTO bo_game_screenshot (game_id, image_url) VALUES (:game_id, :image_url)');
+        $stmt = $this->pdo->prepare('INSERT INTO bo_game_screenshot (game_id, image_url, image_local) VALUES (:game_id, :image_url, :image_local)');
 
         foreach ($screenshots as $url) {
             if (is_string($url) && $url !== '') {
-                $stmt->execute([':game_id' => $gameId, ':image_url' => $url]);
+                $resolvedUrl = $this->resolveImageUrl($url, '');
+                $local = $this->downloadImage($resolvedUrl, self::UPLOAD_ROOT . '/screenshot');
+                $stmt->execute([
+                    ':game_id' => $gameId,
+                    ':image_url' => $url,
+                    ':image_local' => $local !== null ? $this->localToDbPath($local) : '',
+                ]);
             }
         }
+    }
+
+    private function downloadImage(string $url, string $destDir): ?string
+    {
+        if (!is_dir($destDir)) {
+            if (!mkdir($destDir, 0755, true)) {
+                echo "    Error: failed to create directory {$destDir}\n";
+                return null;
+            }
+        }
+
+        $ext = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
+        if (!$ext || !preg_match('/^[a-zA-Z0-9]+$/', $ext)) {
+            $ext = 'jpg';
+        }
+
+        $fileId = $this->idGenerator->generate();
+        $destPath = rtrim($destDir, '/') . '/' . $fileId . '.' . $ext;
+
+        $ch = curl_init($url);
+        if ($ch === false) {
+            return null;
+        }
+
+        $fp = fopen($destPath, 'wb');
+        if (!$fp) {
+            curl_close($ch);
+            return null;
+        }
+
+        curl_setopt_array($ch, [
+            CURLOPT_FILE => $fp,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYPEER => false,
+        ]);
+        curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+        fclose($fp);
+
+        if ($httpCode !== 200 || $error !== '' || !file_exists($destPath) || filesize($destPath) === 0) {
+            @unlink($destPath);
+            echo "    Warning: failed to download {$url} (HTTP {$httpCode})\n";
+            return null;
+        }
+
+        return $destPath;
+    }
+
+    private function resolveImageUrl(string $url, string $site): string
+    {
+        if (preg_match('/^https?:\/\//i', $url)) {
+            return $url;
+        }
+
+        $baseUrls = [
+            'danjipai' => 'https://www.danjipai.com',
+            'gxkgame' => 'https://gxkgame.com',
+        ];
+
+        $base = $baseUrls[$site] ?? '';
+        if ($base === '') {
+            return $url;
+        }
+
+        return rtrim($base, '/') . '/' . ltrim($url, '/');
+    }
+
+    private function localToDbPath(string $localPath): string
+    {
+        return str_replace(self::UPLOAD_ROOT, self::RELATIVE_ROOT, $localPath);
     }
 
     private function normalizeDate(string $date): ?string

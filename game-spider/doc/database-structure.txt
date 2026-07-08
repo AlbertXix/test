@@ -1,36 +1,36 @@
 `bo_game` 表结构:
-+-----------------+-----------------+------+-----+-------------------+-----------------------------------------------+
-| Field           | Type            | Null | Key | Default           | Extra                                         |
-+-----------------+-----------------+------+-----+-------------------+-----------------------------------------------+
-| id              | bigint unsigned | NO   | PRI | NULL              |                                               |
-| category_id     | int unsigned    | NO   |     | 1                 |                                               |
-| title           | varchar(255)    | NO   |     | NULL              |                                               |
-| title_en        | varchar(255)    | NO   |     | NULL              |                                               |
-| keywords        | varchar(255)    | NO   |     |                   |                                               |
-| description     | varchar(255)    | NO   |     |                   |                                               |
-| resource_size   | int unsigned    | NO   |     | NULL              |                                               |
-| system_platform | varchar(255)    | NO   |     | NULL              |                                               |
-| release_date    | datetime        | NO   |     | NULL              |                                               |
-| developer       | varchar(255)    | NO   |     | NULL              |                                               |
-| serial          | varchar(255)    | NO   |     | NULL              |                                               |
-| home_page       | varchar(255)    | NO   |     | NULL              |                                               |
-| source_url      | varchar(255)    | NO   |     |                   |                                               |
-| software_author | varchar(50)     | NO   |     | NULL              |                                               |
-| score           | float unsigned  | NO   |     | 0                 |                                               |
-| user_give_score | float unsigned  | NO   |     | 0                 |                                               |
-| click           | double unsigned | NO   |     | 0                 |                                               |
-| cover_image     | varchar(255)    | NO   |     | NULL              |                                               |
-| content         | text            | NO   |     | NULL              |                                               |
-| download_total  | int unsigned    | NO   |     | NULL              |                                               |
-| download_url    | varchar(255)    | NO   |     |                   |                                               |
-| baidu_url       | varchar(255)    | NO   |     |                   |                                               |
-| xunlei_url      | varchar(255)    | NO   |     |                   |                                               |
-| quark_url       | varchar(255)    | NO   |     |                   |                                               |
-| created_by      | varchar(32)     | NO   |     |                   |                                               |
-| created_time    | datetime        | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
-| updated_by      | varchar(32)     | NO   |     |                   |                                               |
-| updated_time    | datetime        | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
-+-----------------+-----------------+------+-----+-------------------+-----------------------------------------------+
++-------------------+-----------------+------+-----+-------------------+-----------------------------------------------+
+| Field             | Type            | Null | Key | Default           | Extra                                         |
++-------------------+-----------------+------+-----+-------------------+-----------------------------------------------+
+| id                | bigint unsigned | NO   | PRI | NULL              |                                               |
+| category_id       | int unsigned    | NO   |     | 1                 |                                               |
+| title             | varchar(255)    | NO   |     | NULL              |                                               |
+| title_en          | varchar(255)    | NO   |     |                   |                                               |
+| keywords          | varchar(255)    | NO   |     |                   |                                               |
+| description       | varchar(255)    | NO   |     |                   |                                               |
+| resource_size     | int unsigned    | NO   |     | NULL              |                                               |
+| system_platform   | varchar(255)    | NO   |     | NULL              |                                               |
+| release_date      | date            | YES  |     | NULL              |                                               |
+| developer         | varchar(255)    | NO   |     | NULL              |                                               |
+| serial            | varchar(255)    | NO   |     | NULL              |                                               |
+| home_page         | varchar(255)    | NO   |     | NULL              |                                               |
+| source_url        | varchar(255)    | NO   |     |                   |                                               |
+| score             | float unsigned  | NO   |     | 0                 |                                               |
+| user_give_score   | float unsigned  | NO   |     | 0                 |                                               |
+| click             | double unsigned | NO   |     | 0                 |                                               |
+| cover_image       | varchar(255)    | NO   |     | NULL              |                                               |
+| cover_image_local | varchar(255)    | NO   |     |                   |                                               |
+| content           | text            | NO   |     | NULL              |                                               |
+| download_total    | int unsigned    | NO   |     | NULL              |                                               |
+| download_url      | varchar(255)    | NO   |     |                   |                                               |
+| baidu_url         | varchar(255)    | NO   |     |                   |                                               |
+| xunlei_url        | varchar(255)    | NO   |     |                   |                                               |
+| quark_url         | varchar(255)    | NO   |     |                   |                                               |
+| created_by        | varchar(32)     | NO   |     |                   |                                               |
+| created_time      | datetime        | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updated_by        | varchar(32)     | NO   |     |                   |                                               |
+| updated_time      | datetime        | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++-------------------+-----------------+------+-----+-------------------+-----------------------------------------------+
 
 `bo_tag` 表结构:
 +----------+-----------------+------+-----+---------+-------+
@@ -50,10 +50,11 @@
 +---------+-----------------+------+-----+---------+----------------+
 
 `bo_game_screenshot` 表结构:
-+-----------+-----------------+------+-----+---------+----------------+
-| Field     | Type            | Null | Key | Default | Extra          |
-+-----------+-----------------+------+-----+---------+----------------+
-| id        | int unsigned    | NO   | PRI | NULL    | auto_increment |
-| game_id   | bigint unsigned | NO   | MUL | NULL    |                |
-| image_url | varchar(255)    | NO   |     | NULL    |                |
-+-----------+-----------------+------+-----+---------+----------------+
++-------------+-----------------+------+-----+---------+----------------+
+| Field       | Type            | Null | Key | Default | Extra          |
++-------------+-----------------+------+-----+---------+----------------+
+| id          | int unsigned    | NO   | PRI | NULL    | auto_increment |
+| game_id     | bigint unsigned | NO   | MUL | NULL    |                |
+| image_url   | varchar(255)    | NO   |     | NULL    |                |
+| image_local | varchar(255)    | NO   |     |         |                |
++-------------+-----------------+------+-----+---------+----------------+
