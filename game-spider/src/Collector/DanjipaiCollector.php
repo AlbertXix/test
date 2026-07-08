@@ -193,7 +193,7 @@ class DanjipaiCollector extends BaseCollector
 
         $coverHtml = $this->extractor->extractFirstHtml($detailHtml, '.thumbBox img');
         if ($coverHtml && preg_match('/src="([^"]+)"/i', $coverHtml, $m)) {
-            $meta['coverImage'] = $m[1];
+            $meta['coverImage'] = trim(urldecode($m[1]));
         }
 
         if (preg_match('/<div[^>]*id="game_area_description"[^>]*>(.*?)<\/div>\s*<\/div>\s*<\/div>/is', $detailHtml, $section)) {
@@ -233,7 +233,10 @@ class DanjipaiCollector extends BaseCollector
     {
         $html = $this->extractor->extractFirstHtml($detailHtml, '.screenshot');
         if ($html && preg_match_all('/<img[^>]+src="([^"]+)"/i', $html, $m)) {
-            return $m[1];
+            // return $m[1];
+            if (!empty($m[1])) {
+                return array_map(fn($item) => trim(urldecode($item)), $m[1]);
+            }
         }
         return [];
     }

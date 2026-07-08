@@ -79,7 +79,7 @@ class MysqlExporter
         ');
 
         $coverImageLocal = '';
-        $coverUrl = $item['coverImage'] ?? '';
+        $coverUrl = $item['coverImage'] ? trim(urldecode($item['coverImage'])) : '';
         if ($coverUrl !== '') {
             $coverUrl = $this->resolveImageUrl($coverUrl, $item['site'] ?? '');
             $local = $this->downloadImage($coverUrl, self::UPLOAD_ROOT . '/cover');
@@ -190,6 +190,8 @@ class MysqlExporter
 
     private function downloadImage(string $url, string $destDir): ?string
     {
+        $url = trim(urldecode($url));
+
         if (!is_dir($destDir)) {
             if (!mkdir($destDir, 0755, true)) {
                 echo "    Error: failed to create directory {$destDir}\n";
