@@ -58,19 +58,14 @@ class DanjipaiCollector extends BaseCollector
     public function extractDetailUrls(string $listHtml): array
     {
         $urls = [];
+        $crawler = new \Symfony\Component\DomCrawler\Crawler($listHtml);
+        $nodes = $crawler->filterXPath('//div/div[2]/div[5]/div[2]//a');
 
-        preg_match_all(
-            '/<a\s+class="(?:softBox|contentWrap)"\s+href="([^"]+)"[^>]*>/i',
-            $listHtml,
-            $matches
-        );
-
-        if (!empty($matches[1])) {
-            foreach ($matches[1] as $url) {
-                if (str_starts_with($url, 'http')) {
-                    $urls[] = $url;
-                } else {
-                    $urls[] = self::BASE_URL . $url;
+        foreach ($nodes as $node) {
+            if ($node instanceof \DOMElement) {
+                $href = $node->getAttribute('href');
+                if ($href) {
+                    $urls[] = str_starts_with($href, 'http') ? $href : self::BASE_URL . $href;
                 }
             }
         }
@@ -135,13 +130,15 @@ class DanjipaiCollector extends BaseCollector
         $crawler = new \Symfony\Component\DomCrawler\Crawler($detailHtml);
         $labels = $crawler->filter('.softLabelWrap .label');
         foreach ($labels as $label) {
-            $span = $label->getElementsByTagName('span')->item(0);
-            $strong = $label->getElementsByTagName('strong')->item(0);
-            if ($span && $strong) {
-                $key = rtrim(trim($span->textContent), ':');
-                $val = trim($strong->textContent);
-                if (isset($inlineFields[$key])) {
-                    $meta[$inlineFields[$key]] = $val;
+            if ($label instanceof \DOMElement) {
+                $span = $label->getElementsByTagName('span')->item(0);
+                $strong = $label->getElementsByTagName('strong')->item(0);
+                if ($span && $strong) {
+                    $key = rtrim(trim($span->textContent), ':');
+                    $val = trim($strong->textContent);
+                    if (isset($inlineFields[$key])) {
+                        $meta[$inlineFields[$key]] = $val;
+                    }
                 }
             }
         }

@@ -62,9 +62,9 @@ abstract class BaseCollector implements CollectorInterface
     protected function wrapTitle(string $title): string
     {
         if ($title !== '' && !str_contains($title, '《')) {
-            return "《{$title}》";
+            $title = "《{$title}》";
         }
-        return $title;
+        return str_replace(['》——', '》 ——', '》—'], '》', $title);
     }
 
     protected function extractEnglishFromTitle(string $title): string

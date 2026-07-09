@@ -35,17 +35,16 @@ class MysqlExporter
 
     private function gameExists(string $title): bool
     {
-        static $cache = [];
-
-        if (array_key_exists($title, $cache)) {
-            return $cache[$title];
+        $title = str_replace(['》——', '》 ——', '》—'], '》', $title);
+        $clean = trim(str_replace(['《', '》'], '', $title));
+        if ($clean === '') {
+            return false;
         }
 
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM bo_game WHERE title = :title');
-        $stmt->execute([':title' => $title]);
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM bo_game WHERE title = :title OR REPLACE(REPLACE(title, '《', ''), '》', '') = :clean");
+        $stmt->execute([':title' => $title, ':clean' => $clean]);
 
-        $cache[$title] = (int) $stmt->fetchColumn() > 0;
-        return $cache[$title];
+        return $stmt->fetchColumn() > 0;
     }
 
     private function insertGame(array $item): void
@@ -82,7 +81,7 @@ class MysqlExporter
         $coverUrl = $item['coverImage'] ? trim(urldecode($item['coverImage'])) : '';
         if ($coverUrl !== '') {
             $coverUrl = $this->resolveImageUrl($coverUrl, $item['site'] ?? '');
-            $local = $this->downloadImage($coverUrl, self::UPLOAD_ROOT . '/cover');
+            $local = $this->downloadImage($coverUrl, self::UPLOAD_ROOT);
             if ($local !== null) {
                 $coverImageLocal = $this->localToDbPath($local);
             }
@@ -147,22 +146,21 @@ class MysqlExporter
 
     private function lookupTagId(string $tagName): ?int
     {
-        static $cache = [];
-
-        if (array_key_exists($tagName, $cache)) {
-            return $cache[$tagName];
-        }
-
         $stmt = $this->pdo->prepare('SELECT id FROM bo_tag WHERE tag_name = :tag_name OR tag_name LIKE :tag_name_like LIMIT 1');
         $stmt->execute([':tag_name' => $tagName, ':tag_name_like' => '%' . $tagName . '%']);
         $id = $stmt->fetchColumn();
 
-        $cache[$tagName] = $id !== false ? (int) $id : null;
-        return $cache[$tagName];
+        return $id !== false ? (int) $id : null;
     }
 
     private function insertGameTagRow(int $gameId, int $tagId): void
     {
+        $check = $this->pdo->prepare('SELECT COUNT(*) FROM bo_game_tag WHERE game_id = :game_id AND tag_id = :tag_id');
+        $check->execute([':game_id' => $gameId, ':tag_id' => $tagId]);
+        if ($check->fetchColumn() > 0) {
+            return;
+        }
+
         $stmt = $this->pdo->prepare('INSERT INTO bo_game_tag (game_id, tag_id) VALUES (:game_id, :tag_id)');
         $stmt->execute([':game_id' => $gameId, ':tag_id' => $tagId]);
     }
@@ -173,13 +171,19 @@ class MysqlExporter
             return;
         }
 
-        $stmt = $this->pdo->prepare('INSERT INTO bo_game_screenshot (game_id, image_url, image_local) VALUES (:game_id, :image_url, :image_local)');
+        $check = $this->pdo->prepare('SELECT COUNT(*) FROM bo_game_screenshot WHERE game_id = :game_id AND image_url = :image_url');
+        $insert = $this->pdo->prepare('INSERT INTO bo_game_screenshot (game_id, image_url, image_local) VALUES (:game_id, :image_url, :image_local)');
 
         foreach ($screenshots as $url) {
             if (is_string($url) && $url !== '') {
+                $check->execute([':game_id' => $gameId, ':image_url' => $url]);
+                if ($check->fetchColumn() > 0) {
+                    continue;
+                }
+
                 $resolvedUrl = $this->resolveImageUrl($url, '');
-                $local = $this->downloadImage($resolvedUrl, self::UPLOAD_ROOT . '/screenshot');
-                $stmt->execute([
+                $local = $this->downloadImage($resolvedUrl, self::UPLOAD_ROOT);
+                $insert->execute([
                     ':game_id' => $gameId,
                     ':image_url' => $url,
                     ':image_local' => $local !== null ? $this->localToDbPath($local) : '',
@@ -199,13 +203,47 @@ class MysqlExporter
             }
         }
 
-        $ext = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
-        if (!$ext || !preg_match('/^[a-zA-Z0-9]+$/', $ext)) {
-            $ext = 'jpg';
+        $path = parse_url($url, PHP_URL_PATH);
+        $steamPos = strpos($path, '/steam/apps/');
+        if ($steamPos !== false) {
+            $relativePath = ltrim(substr($path, $steamPos + strlen('/steam/apps/')), '/');
+            $relParts = explode('/', $relativePath);
+            $fileName = array_pop($relParts);
+            $fullDir = rtrim($destDir, '/');
+            if (!empty($relParts)) {
+                $fullDir .= '/' . implode('/', $relParts);
+                if (!is_dir($fullDir)) {
+                    if (!mkdir($fullDir, 0755, true)) {
+                        echo "    Error: failed to create directory {$fullDir}\n";
+                        return null;
+                    }
+                }
+            }
+            $destPath = $fullDir . '/' . $fileName;
+        } else {
+            $parts = array_values(array_filter(explode('/', $path), fn($v) => $v !== ''));
+
+            if (count($parts) >= 2) {
+                $subDir = $parts[count($parts) - 2];
+                $fileName = $parts[count($parts) - 1];
+                $fullDir = rtrim($destDir, '/') . '/' . $subDir;
+                if (!is_dir($fullDir)) {
+                    if (!mkdir($fullDir, 0755, true)) {
+                        echo "    Error: failed to create directory {$fullDir}\n";
+                        return null;
+                    }
+                }
+                $destPath = $fullDir . '/' . $fileName;
+            } elseif (count($parts) === 1) {
+                $destPath = rtrim($destDir, '/') . '/' . $parts[0];
+            } else {
+                $destPath = rtrim($destDir, '/') . '/file.jpg';
+            }
         }
 
-        $fileId = $this->idGenerator->generate();
-        $destPath = rtrim($destDir, '/') . '/' . $fileId . '.' . $ext;
+        if (file_exists($destPath) && filesize($destPath) > 0) {
+            return $destPath;
+        }
 
         for ($attempt = 1; $attempt <= 2; $attempt++) {
             if ($this->doDownload($url, $destPath)) {

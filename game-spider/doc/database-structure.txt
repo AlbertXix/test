@@ -1,60 +1,79 @@
 `bo_game` 表结构:
-+-------------------+-----------------+------+-----+-------------------+-----------------------------------------------+
-| Field             | Type            | Null | Key | Default           | Extra                                         |
-+-------------------+-----------------+------+-----+-------------------+-----------------------------------------------+
-| id                | bigint unsigned | NO   | PRI | NULL              |                                               |
-| category_id       | int unsigned    | NO   |     | 1                 |                                               |
-| title             | varchar(255)    | NO   |     | NULL              |                                               |
-| title_en          | varchar(255)    | NO   |     |                   |                                               |
-| keywords          | varchar(255)    | NO   |     |                   |                                               |
-| description       | varchar(255)    | NO   |     |                   |                                               |
-| resource_size     | int unsigned    | NO   |     | NULL              |                                               |
-| system_platform   | varchar(255)    | NO   |     | NULL              |                                               |
-| release_date      | date            | YES  |     | NULL              |                                               |
-| developer         | varchar(255)    | NO   |     | NULL              |                                               |
-| serial            | varchar(255)    | NO   |     | NULL              |                                               |
-| home_page         | varchar(255)    | NO   |     | NULL              |                                               |
-| source_url        | varchar(255)    | NO   |     |                   |                                               |
-| score             | float unsigned  | NO   |     | 0                 |                                               |
-| user_give_score   | float unsigned  | NO   |     | 0                 |                                               |
-| click             | double unsigned | NO   |     | 0                 |                                               |
-| cover_image       | varchar(255)    | NO   |     | NULL              |                                               |
-| cover_image_local | varchar(255)    | NO   |     |                   |                                               |
-| content           | text            | NO   |     | NULL              |                                               |
-| download_total    | int unsigned    | NO   |     | NULL              |                                               |
-| download_url      | varchar(255)    | NO   |     |                   |                                               |
-| baidu_url         | varchar(255)    | NO   |     |                   |                                               |
-| xunlei_url        | varchar(255)    | NO   |     |                   |                                               |
-| quark_url         | varchar(255)    | NO   |     |                   |                                               |
-| created_by        | varchar(32)     | NO   |     |                   |                                               |
-| created_time      | datetime        | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
-| updated_by        | varchar(32)     | NO   |     |                   |                                               |
-| updated_time      | datetime        | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
-+-------------------+-----------------+------+-----+-------------------+-----------------------------------------------+
++-------------------+-----------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
+| COLUMN_NAME       | COLUMN_TYPE     | COLUMN_KEY | EXTRA                                         | IS_NULLABLE | COLUMN_DEFAULT    | COLUMN_COMMENT     |
++-------------------+-----------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
+| id                | bigint unsigned | PRI        |                                               | NO          | NULL              | 主键               |
+| category_id       | int unsigned    |            |                                               | NO          | 1                 | 分类ID             |
+| title             | varchar(255)    |            |                                               | NO          | NULL              | 标题               |
+| title_en          | varchar(255)    |            |                                               | NO          |                   | 英文标题           |
+| keywords          | varchar(255)    |            |                                               | NO          |                   | 关键词             |
+| description       | varchar(255)    |            |                                               | NO          |                   | 关键词描述         |
+| resource_size     | int unsigned    |            |                                               | NO          | NULL              | 资源大小           |
+| system_platform   | varchar(255)    |            |                                               | NO          | NULL              | 系统平台           |
+| release_date      | date            |            |                                               | YES         | NULL              | 发行日期           |
+| developer         | varchar(255)    |            |                                               | NO          | NULL              | 开发商             |
+| serial            | varchar(255)    |            |                                               | NO          | NULL              | 系列               |
+| home_page         | varchar(255)    |            |                                               | NO          | NULL              | 官方网站           |
+| source_url        | varchar(255)    |            |                                               | NO          |                   | 来源URL            |
+| score             | float unsigned  |            |                                               | NO          | 0                 | 评分               |
+| user_give_score   | float unsigned  |            |                                               | NO          | 0                 | 用户评分           |
+| click             | double unsigned |            |                                               | NO          | 0                 | 点击量             |
+| cover_image       | varchar(255)    |            |                                               | NO          | NULL              | 封面图             |
+| cover_image_local | varchar(255)    |            |                                               | NO          |                   | 本地封面图         |
+| content           | text            |            |                                               | NO          | NULL              | 内容               |
+| download_total    | int unsigned    |            |                                               | NO          | NULL              | 总下载量           |
+| download_url      | varchar(255)    |            |                                               | NO          |                   | 下载地址           |
+| baidu_url         | varchar(255)    |            |                                               | NO          |                   | 百度盘下载URL      |
+| xunlei_url        | varchar(255)    |            |                                               | NO          |                   | 迅雷盘下载URL      |
+| quark_url         | varchar(255)    |            |                                               | NO          |                   | 夸克盘下载URL      |
+| created_by        | varchar(32)     |            |                                               | NO          |                   | 发布人             |
+| created_time      | datetime        |            | DEFAULT_GENERATED                             | NO          | CURRENT_TIMESTAMP | 创建时间           |
+| updated_by        | varchar(32)     |            |                                               | NO          |                   | 更新人             |
+| updated_time      | datetime        |            | DEFAULT_GENERATED on update CURRENT_TIMESTAMP | NO          | CURRENT_TIMESTAMP | 更新时间           |
++-------------------+-----------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
 
 `bo_tag` 表结构:
-+----------+-----------------+------+-----+---------+-------+
-| Field    | Type            | Null | Key | Default | Extra |
-+----------+-----------------+------+-----+---------+-------+
-| id       | bigint unsigned | NO   | PRI | NULL    |       |
-| tag_name | varchar(50)     | NO   |     | NULL    |       |
-+----------+-----------------+------+-----+---------+-------+
++-------------+-----------------+------------+-------+-------------+----------------+----------------+
+| COLUMN_NAME | COLUMN_TYPE     | COLUMN_KEY | EXTRA | IS_NULLABLE | COLUMN_DEFAULT | COLUMN_COMMENT |
++-------------+-----------------+------------+-------+-------------+----------------+----------------+
+| id          | bigint unsigned | PRI        |       | NO          | NULL           | 主键ID         |
+| tag_name    | varchar(50)     |            |       | NO          | NULL           | 标签名         |
++-------------+-----------------+------------+-------+-------------+----------------+----------------+
 
 `bo_game_tag` 表结构:
-+---------+-----------------+------+-----+---------+----------------+
-| Field   | Type            | Null | Key | Default | Extra          |
-+---------+-----------------+------+-----+---------+----------------+
-| id      | int unsigned    | NO   | PRI | NULL    | auto_increment |
-| game_id | bigint unsigned | NO   | MUL | NULL    |                |
-| tag_id  | bigint unsigned | NO   | MUL | NULL    |                |
-+---------+-----------------+------+-----+---------+----------------+
++-------------+-----------------+------------+----------------+-------------+----------------+----------------+
+| COLUMN_NAME | COLUMN_TYPE     | COLUMN_KEY | EXTRA          | IS_NULLABLE | COLUMN_DEFAULT | COLUMN_COMMENT |
++-------------+-----------------+------------+----------------+-------------+----------------+----------------+
+| id          | int unsigned    | PRI        | auto_increment | NO          | NULL           | 主键           |
+| game_id     | bigint unsigned | MUL        |                | NO          | NULL           | 游戏ID         |
+| tag_id      | bigint unsigned | MUL        |                | NO          | NULL           | 标签ID         |
++-------------+-----------------+------------+----------------+-------------+----------------+----------------+
 
 `bo_game_screenshot` 表结构:
-+-------------+-----------------+------+-----+---------+----------------+
-| Field       | Type            | Null | Key | Default | Extra          |
-+-------------+-----------------+------+-----+---------+----------------+
-| id          | int unsigned    | NO   | PRI | NULL    | auto_increment |
-| game_id     | bigint unsigned | NO   | MUL | NULL    |                |
-| image_url   | varchar(255)    | NO   |     | NULL    |                |
-| image_local | varchar(255)    | NO   |     |         |                |
-+-------------+-----------------+------+-----+---------+----------------+
++-------------+-----------------+------------+----------------+-------------+----------------+--------------------+
+| COLUMN_NAME | COLUMN_TYPE     | COLUMN_KEY | EXTRA          | IS_NULLABLE | COLUMN_DEFAULT | COLUMN_COMMENT     |
++-------------+-----------------+------------+----------------+-------------+----------------+--------------------+
+| id          | int unsigned    | PRI        | auto_increment | NO          | NULL           | 主键ID             |
+| game_id     | bigint unsigned | MUL        |                | NO          | NULL           | 游戏ID             |
+| image_url   | varchar(255)    |            |                | NO          | NULL           | 图片地址           |
+| image_local | varchar(255)    |            |                | NO          |                | 本地图片地址       |
++-------------+-----------------+------------+----------------+-------------+----------------+--------------------+
+
+`bo_game_score` 表结构:
++-----------------+-------------------+------------+-----------------------------------------------+-------------+-------------------+-----------------+
+| COLUMN_NAME     | COLUMN_TYPE       | COLUMN_KEY | EXTRA                                         | IS_NULLABLE | COLUMN_DEFAULT    | COLUMN_COMMENT  |
++-----------------+-------------------+------------+-----------------------------------------------+-------------+-------------------+-----------------+
+| id              | bigint            | PRI        |                                               | NO          | NULL              | 主键ID          |
+| game_id         | bigint            |            |                                               | YES         | NULL              | 游戏ID          |
+| year            | smallint unsigned |            |                                               | NO          | NULL              | 年份            |
+| game_name       | varchar(255)      |            |                                               | NO          | NULL              | 游戏名          |
+| game_name_en    | varchar(255)      |            |                                               | NO          |                   | 游戏英文名      |
+| score           | float             |            |                                               | NO          | NULL              | 评分            |
+| score_from      | varchar(255)      |            |                                               | NO          | NULL              | 评分来源        |
+| rank_reason     | varchar(255)      |            |                                               | NO          | NULL              | 上榜理由        |
+| reference_links | varchar(2048)     |            |                                               | NO          | NULL              | 参考链接        |
+| created_by      | varchar(32)       |            |                                               | NO          |                   | 创建人          |
+| created_time    | datetime          |            | DEFAULT_GENERATED                             | YES         | CURRENT_TIMESTAMP | 创建时间        |
+| updated_by      | varchar(32)       |            |                                               | NO          |                   | 更新人          |
+| updated_time    | datetime          |            | DEFAULT_GENERATED on update CURRENT_TIMESTAMP | YES         | CURRENT_TIMESTAMP | 更新时间        |
++-----------------+-------------------+------------+-----------------------------------------------+-------------+-------------------+-----------------+
