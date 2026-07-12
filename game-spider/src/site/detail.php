@@ -1,0 +1,96 @@
+<?php
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+if (!$id) { echo '<p>游戏不存在</p>'; return; }
+
+$game = $pdo->prepare('SELECT * FROM bo_game WHERE id = :id');
+$game->execute([':id' => $id]);
+$game = $game->fetch(\PDO::FETCH_ASSOC);
+if (!$game) { echo '<p>游戏不存在</p>'; return; }
+
+$gameTags = $pdo->prepare('SELECT t.tag_name FROM bo_tag t JOIN bo_game_tag gt ON gt.tag_id = t.id WHERE gt.game_id = :game_id');
+$gameTags->execute([':game_id' => $id]);
+$gameTags = $gameTags->fetchAll(\PDO::FETCH_COLUMN);
+
+$screenshots = $pdo->prepare('SELECT image_local, image_url FROM bo_game_screenshot WHERE game_id = :game_id ORDER BY id ASC');
+$screenshots->execute([':game_id' => $id]);
+$screenshots = $screenshots->fetchAll(\PDO::FETCH_ASSOC);
+?>
+
+<section class="detail-page">
+    <div class="detail-header">
+        <div class="detail-cover" style="background-image: url('<?= htmlspecialchars($game['cover_image'] ?: $game['cover_image_local'] ?: '/Public/up/default.jpg') ?>')"></div>
+        <div class="detail-info">
+            <h1><?= htmlspecialchars($game['title']) ?></h1>
+            <!-- <?php if ($game['title_en']): ?><p class="title-en">英文名: <?= htmlspecialchars($game['title_en']) ?></p><?php endif; ?> -->
+            <div class="detail-meta">
+                <?php if (!empty($gameTags)): ?>
+                <p><strong>类型：</strong><?= htmlspecialchars(implode(' / ', $gameTags)) ?></p>
+                <?php endif; ?>
+                <?php if ($game['resource_size']): ?><p><strong>大小：</strong><?= round($game['resource_size'] / 1024, 1) ?> GB</p><?php endif; ?>
+                <?php if ($game['release_date']): ?><p><strong>发行日期：</strong><?= $game['release_date'] ?></p><?php endif; ?>
+                <?php if ($game['developer']): ?><p><strong>开发商：</strong><?= htmlspecialchars($game['developer']) ?></p><?php endif; ?>
+                <?php if ($game['system_platform']): ?><p><strong>运行环境：</strong><?= htmlspecialchars($game['system_platform']) ?></p><?php endif; ?>
+            </div>
+            <?php if ($game['description']): ?>
+            <div class="description"><?= htmlspecialchars($game['description']) ?></div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <?php if (!empty($screenshots)): ?>
+    <div class="screenshot-gallery">
+        <h2>游戏截图</h2>
+        <div class="swiper screenshotSwiper">
+            <div class="swiper-wrapper">
+                <?php foreach ($screenshots as $s): ?>
+                <div class="swiper-slide">
+                    <div class="screenshot-item" data-src="<?= htmlspecialchars($s['image_url'] ?: $s['image_local']) ?>">
+                        <img src="<?= htmlspecialchars($s['image_url'] ?: $s['image_local']) ?>" alt="游戏截图" loading="lazy">
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-img" id="lightboxImg">
+    </div>
+
+    <script>
+    new Swiper('.screenshotSwiper', {
+        slidesPerView: 1,
+        spaceBetween: 16,
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        pagination: { el: '.swiper-pagination', clickable: true },
+        breakpoints: {
+            600: { slidesPerView: 2 },
+            900: { slidesPerView: 3 }
+        }
+    });
+
+    var lightbox = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightboxImg');
+    document.querySelectorAll('.screenshot-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            lightboxImg.src = this.dataset.src;
+            lightbox.style.display = 'flex';
+        });
+    });
+    lightbox.addEventListener('click', function() {
+        this.style.display = 'none';
+    });
+    </script>
+    <?php endif; ?>
+
+    <?php if ($game['content']): ?>
+    <div class="game-content">
+        <!-- <h2>游戏介绍</h2> -->
+        <div class="content-body"><?= htmlspecialchars_decode($game['content'], ENT_QUOTES) ?></div>
+    </div>
+    <?php endif; ?>
+</section>
