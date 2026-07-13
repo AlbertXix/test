@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏基地</title>
+<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="?page=home" class="logo">游戏基地</a>
+        <nav>
+            <a href="?page=home" class="">首页</a>
+            <a href="?page=games" class="">电脑游戏</a>
+            <a href="?page=rankings" class="">游戏排名</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<section class="detail-page">
+    <div class="detail-header">
+        <div class="detail-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/header.jpg')"></div>
+        <div class="detail-info">
+            <h1>《亥灵胎/SCHiM—Build 15027939多国语言（含简体中文）免安装解压即玩版》</h1>
+            <div class="detail-meta">
+                                <p><strong>类型：</strong>冒险游戏 / 益智休闲 / 独立游戏</p>
+                                <p><strong>大小：</strong>525 MB</p>                                                <p><strong>运行环境：</strong>Windows</p>            </div>
+                        <div class="description">亥灵胎/SCHiM 《SCHiM》是一款在影子之间跳跃移动的3D平台跳跃游戏。在这个富有探索乐趣的热闹世界中，将光与动画直接融入在游戏玩法中，是本作独一无二的特色。</div>
+                    </div>
+    </div>
+
+        <div class="screenshot-gallery">
+        <h2>游戏截图</h2>
+        <div class="swiper screenshotSwiper">
+            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                    <div class="screenshot-item" data-src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/ss_282ba251edcc88962884a3a0e6db4e6dbe505cba.600x338.jpg">
+                        <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/ss_282ba251edcc88962884a3a0e6db4e6dbe505cba.600x338.jpg" alt="游戏截图" loading="lazy">
+                    </div>
+                </div>
+                                <div class="swiper-slide">
+                    <div class="screenshot-item" data-src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/ss_27952fe5057179e262faa6c08e06f1342999d85c.600x338.jpg">
+                        <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/ss_27952fe5057179e262faa6c08e06f1342999d85c.600x338.jpg" alt="游戏截图" loading="lazy">
+                    </div>
+                </div>
+                                <div class="swiper-slide">
+                    <div class="screenshot-item" data-src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/ss_94e0ffa619a4a6a7c899e45d5a4f35fbf0e076f2.600x338.jpg">
+                        <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/ss_94e0ffa619a4a6a7c899e45d5a4f35fbf0e076f2.600x338.jpg" alt="游戏截图" loading="lazy">
+                    </div>
+                </div>
+                            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-img" id="lightboxImg">
+    </div>
+
+    <script>
+    new Swiper('.screenshotSwiper', {
+        slidesPerView: 1,
+        spaceBetween: 16,
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        pagination: { el: '.swiper-pagination', clickable: true },
+        breakpoints: {
+            600: { slidesPerView: 2 },
+            900: { slidesPerView: 3 }
+        }
+    });
+
+    var lightbox = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightboxImg');
+    document.querySelectorAll('.screenshot-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            lightboxImg.src = this.dataset.src;
+            lightbox.style.display = 'flex';
+        });
+    });
+    lightbox.addEventListener('click', function() {
+        this.style.display = 'none';
+    });
+    </script>
+    
+        <div class="game-content">
+        <div class="content-body"><div class="game_page_autocollapse_ctn"><div data-panel='{"type":"PanelGroup"}' id="aboutThisGame" class="game_page_autocollapse" style="max-height: none;"><div id="game_area_description" class="game_area_description"><h2>关于此游戏</h2><h2 class="bb_tag">关于这款游戏</h2>《SCHiM》是一款在富有探索乐趣的热闹世界中，于影子之间跳跃移动的3D平台跳跃游戏。<h2 class="bb_tag">SCHiM（亥灵胎）是什么？</h2>SCHiM是在静物和生物中均有寄宿的精灵。它们存在于一切影子中，世界上的所有事物均拥有自己的SCHiM。SCHiM绝对不会和本体分离。<br><br>自宿主诞生以来，SCHiM就在宿主的影子中默默守望着宿主一生所经历的种种场面。<br>可突然有一天，一只SCHiM却与它的宿主分离了！<br><br>它究竟能否在一切都太迟之前，回到原主的身边呢……？<br><br><div class="bb_wide_img_ctn"><img class="bb_img" src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1519710/extras/Crossroads.gif?t=1734949868"></div><h2 class="bb_tag">游戏特色</h2><ul class="bb_ul list-paddingleft-2"><li><p>以影子作为落脚点的独特动作系统<br></p></li><li><p>优美动画所描绘的世界，以及随之运动的影子<br></p></li><li><p>随关卡而改变的景色和小故事<br></p></li><li><p>精心刻画的，影之精灵眼中美丽而抽象的世界</p></li></ul><div class="bb_wide_img_ctn"><img class="bb_img" src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1519710/extras/Cat.gif?t=1734949868"></div></div></div></div><p><br></p><h2>系统需求</h2><p><br></p><div class="sysreq_tabs"><br><div style="clear: left;"></div></div><p><br></p><div class="game_area_sys_req_leftCol"><ul class=" list-paddingleft-2"><strong>最低配置:</strong><br><ul class="bb_ul list-paddingleft-2" style="list-style-type: square;"><li><p>需要 64 位处理器和操作系统<br></p></li><li><p><strong>操作系统 *:</strong> Windows 7<br></p></li><li><p><strong>处理器:</strong> Intel Core2Quad Q6600 2,40 GHz<br></p></li><li><p><strong>内存:</strong> 2 GB RAM<br></p></li><li><p><strong>显卡:</strong> GeForce GTX 650 (1024 MB Ram)<br></p></li><li><p><strong>存储空间:</strong> 需要 2 GB 可用空间</p></li></ul></ul></div><p><br></p>                    </article></div>
+    </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 游戏基地</p>
+</footer>
+
+<div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+window.addEventListener('scroll', function() {
+    document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 300);
+});
+</script>
+</body>
+</html>

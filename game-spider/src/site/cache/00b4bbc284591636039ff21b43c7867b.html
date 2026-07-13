@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏基地</title>
+<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="?page=home" class="logo">游戏基地</a>
+        <nav>
+            <a href="?page=home" class="">首页</a>
+            <a href="?page=games" class="">电脑游戏</a>
+            <a href="?page=rankings" class="">游戏排名</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<section class="detail-page">
+    <div class="detail-header">
+        <div class="detail-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/header.jpg')"></div>
+        <div class="detail-info">
+            <h1>《112接线员/112 Operator》v0.221004多国语言（含简体中文）免安装解压即</h1>
+            <div class="detail-meta">
+                                <p><strong>类型：</strong>策略棋牌 / 模拟经营 / 独立游戏</p>
+                                <p><strong>大小：</strong>1.37 GB</p>                                                <p><strong>运行环境：</strong>Windows</p>            </div>
+                        <div class="description">112接线员/112 Operator 管理全世界任意城市的紧急呼叫中心！应答求救电话，派遣救援力量，处理各种由天气、地形以及交通引起的棘手状况。快来帮助市民们渡过各种天灾人祸，每一天都让自己成为更好的紧急呼叫接线员吧！</div>
+                    </div>
+    </div>
+
+        <div class="screenshot-gallery">
+        <h2>游戏截图</h2>
+        <div class="swiper screenshotSwiper">
+            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                    <div class="screenshot-item" data-src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/ss_6544b792f3ad6160d9d18a20a7f1f1bcd20bb7e1.600x338.jpg">
+                        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/ss_6544b792f3ad6160d9d18a20a7f1f1bcd20bb7e1.600x338.jpg" alt="游戏截图" loading="lazy">
+                    </div>
+                </div>
+                                <div class="swiper-slide">
+                    <div class="screenshot-item" data-src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/ss_77b6d4f3f7f9f58b50882a04a0321dcb5566a10e.600x338.jpg">
+                        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/ss_77b6d4f3f7f9f58b50882a04a0321dcb5566a10e.600x338.jpg" alt="游戏截图" loading="lazy">
+                    </div>
+                </div>
+                            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-img" id="lightboxImg">
+    </div>
+
+    <script>
+    new Swiper('.screenshotSwiper', {
+        slidesPerView: 1,
+        spaceBetween: 16,
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        pagination: { el: '.swiper-pagination', clickable: true },
+        breakpoints: {
+            600: { slidesPerView: 2 },
+            900: { slidesPerView: 3 }
+        }
+    });
+
+    var lightbox = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightboxImg');
+    document.querySelectorAll('.screenshot-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            lightboxImg.src = this.dataset.src;
+            lightbox.style.display = 'flex';
+        });
+    });
+    lightbox.addEventListener('click', function() {
+        this.style.display = 'none';
+    });
+    </script>
+    
+        <div class="game-content">
+        <div class="content-body"><div class="game_page_autocollapse_ctn expanded"><div data-panel='{"type":"PanelGroup"}' id="aboutThisGame" class="game_page_autocollapse" style="max-height: none;"><div id="game_area_description" class="game_area_description"><h2>关于此游戏</h2><h2 class="bb_tag"><div class="bb_img_ctn"><img class="bb_img" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/extras/ENG_01.gif?t=1726474654"></div></h2>在112 Operator中，玩家可以管理全世界任意城市的紧急呼叫中心！派遣救援力量，应答求救电话，直面由天气、交通或者季节变换引发的各种危急状况。帮助城市挺过大大小小的突发事件，比如暴乱、有组织犯罪、恐怖袭击、自然灾害等等！<h2 class="bb_tag"><div class="bb_img_ctn"><img class="bb_img" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/extras/CN_02.gif?t=1726474654"></div></h2><h2 class="bb_tag">危险已经升级</h2>以空前的规模展开救援。本作是斩获殊荣的911
+ 
+Operator之续作，玩家将在许多可大可小的层面上展开行动。你既可以守护一方小小的社区，也可以在世界上最大的都市中协调数个接线员的工作。游戏采用全3D画面，让你可以深入查看所派遣单位的行动。你可以从超过10万个地区中选择游玩区域，包括各类城区、市县以及世界各地数以千计的真实城市。<h2 class="bb_tag">各单位注意：风暴来袭……</h2>直面基于真实历史资料设计，变幻莫测的天气系统。各类事件也会根据日夜变化、交通疏堵以及季节更替而改变。要特别注意可能引发各种自然灾害的极端情况，全力扑灭可以席卷全地图的大火。然而，你需要面对的问题还不仅仅是天气——你还得小心应对恐怖袭击以及帮派火拼。<h2 class="bb_tag"><div class="bb_img_ctn"><img class="bb_img" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/extras/CN_04.gif?t=1726474654"></div></h2><h2 class="bb_tag">这里是112，发生了什么紧急情况？</h2>处理人们在纷繁复杂的情况下打来的紧急求助电话。电话的那头到底是什么人，这完全无法预料。有时会遇到恐怖的杀人事件，有时又得教他人进行心肺复苏，有时甚至会碰到爱恶作剧的人打来的骚扰电话，并努力保持耐心克制。<h2 class="bb_tag">这是我的职责，女士……</h2>在全新的生涯模式中，你可以选择一个欧洲城市，试试看自己能否爬到接线员职业生涯的顶端。服从上级的命令，看看你的行动会对你掌管的人员以及需要救助的人产生怎样的影响。有时，你犯错之后只会收到一封训诫邮件，但有时则会影响到自己的人生。<br>你还可以在全世界任何城市游玩特殊的场景关卡，或者在自由游戏模式中按照自己设定的规则游玩。<h2 class="bb_tag">请求支援！</h2>指挥最精英的专家团队，运用各种高科技载具及装备。SWAT特警小队、搜救直升机、防暴装备，全部听你安排。派出的单位抵达现场后，你可以在战术视图中一览当地全貌并进行指挥。<h2 class="bb_tag"><div class="bb_img_ctn"><img class="bb_img" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/extras/CN_03.gif?t=1726474654"></div></h2><h2 class="bb_tag">112 OPERATOR新特色：</h2><ul class="bb_ul list-paddingleft-2"><li><p>扩大25倍，基于真实城市的可拓展地图以及3D建筑<br></p></li><li><p>一系列全新的紧急求助来电以及大型事件<br></p></li><li><p>完全重新设计的任务模式，包含目标系统，电子邮件及剧情故事<br></p></li><li><p>日夜变化、天气、季节以及交通将影响你的任务和发生的事件<br></p></li><li><p>新的火灾机制。大火可席卷整片区域，需要大量单位来处理<br></p></li><li><p>地域特色 - 游戏内容会根据国家法规及地区特征而改变（贫民窟/商务区/居民区/工业区/森林等等）<br></p></li><li><p>新的现场情景视图，可精确且直观地呈现事件处置状况<br></p></li><li><p>多种新队员，包括医生、警官、狗、机器人等等！<br></p></li><li><p>额外的调度员，可以安排到各个地区提供协助！<br></p></li><li><p>重新设计的装备系统，现在采用整套设备的形式。</p></li></ul></div></div></div><p><br></p><h2>系统需求</h2><p><br></p><div class="sysreq_tabs"><br><div style="clear: left;"></div></div><p><br></p><div class="game_area_sys_req_leftCol"><ul class=" list-paddingleft-2"><strong>最低配置:</strong><br><ul class="bb_ul list-paddingleft-2" style="list-style-type: square;"><li><p>需要 64 位处理器和操作系统<br></p></li><li><p><strong>操作系统 *:</strong> Windows 7 SP1+<br></p></li><li><p><strong>处理器:</strong> 2 Ghz<br></p></li><li><p><strong>内存:</strong> 6 GB RAM<br></p></li><li><p><strong>显卡:</strong> NVIDIA GeForce GT 650<br></p></li><li><p><strong>DirectX 版本:</strong> 10<br></p></li><li><p><strong>存储空间:</strong> 需要 4 GB 可用空间</p></li></ul></ul></div><p><br></p><div class="game_area_sys_req_rightCol"><ul class=" list-paddingleft-2"><strong>推荐配置:</strong><br><ul class="bb_ul list-paddingleft-2" style="list-style-type: square;"><li><p>需要 64 位处理器和操作系统<br></p></li><li><p><strong>操作系统:</strong> Windows 10<br></p></li><li><p><strong>处理器:</strong> 2.6 Ghz, multi-core<br></p></li><li><p><strong>内存:</strong> 8 GB RAM<br></p></li><li><p><strong>显卡:</strong> NVIDIA GeForce GTX 1050<br></p></li><li><p><strong>DirectX 版本:</strong> 10<br></p></li><li><p><strong>网络:</strong> 宽带互联网连接<br></p></li><li><p><strong>存储空间:</strong> 需要 8 GB 可用空间</p></li></ul></ul></div><p><br></p>                    </article></div>
+    </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 游戏基地</p>
+</footer>
+
+<div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+window.addEventListener('scroll', function() {
+    document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 300);
+});
+</script>
+</body>
+</html>

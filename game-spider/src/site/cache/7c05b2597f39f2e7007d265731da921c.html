@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏基地</title>
+<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="?page=home" class="logo">游戏基地</a>
+        <nav>
+            <a href="?page=home" class="active">首页</a>
+            <a href="?page=games" class="">电脑游戏</a>
+            <a href="?page=rankings" class="">游戏排名</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+<section class="hero" id="hero">
+    <div class="stars" id="stars"></div>
+    <div class="shooting-star" id="shootingStar1"></div>
+    <div class="shooting-star" id="shootingStar2"></div>
+    <div class="radar-base">
+        <div class="radar-dish"></div>
+        <div class="radar-feed"></div>
+        <div class="radar-line"></div>
+        <div class="radar-glow"></div>
+    </div>
+    <div class="hero-content" id="heroContent">
+        <p class="tagline">发现好游戏，畅玩无限</p>
+        <form class="search-box" action="?page=search" method="get">
+            <input type="hidden" name="page" value="search">
+            <input type="text" name="q" placeholder="搜索游戏名称..." autocomplete="off">
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+</section>
+
+<script>
+(function() {
+    var hero = document.getElementById('hero');
+    var stars = document.getElementById('stars');
+    hero.addEventListener('mousemove', function(e) {
+        var rect = hero.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        stars.style.transform = 'translate(' + (x * 6) + 'px, ' + (y * 4) + 'px)';
+    });
+    hero.addEventListener('mouseleave', function() {
+        stars.style.transform = 'translate(0, 0)';
+    });
+})();
+</script>
+
+<div class="category-grid">
+<section class="category-section">
+    <h2><span>角色扮演</span><a href="?page=games&tag_id=862115227972403200" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483666384912384" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/942970/header_schinese.jpg')"></div>
+            <div class="game-info">
+                <h3>《疑案追声/Unheard - Voices of Crime》v67214多国语言（含简体中文）免</h3>
+                <div class="game-meta">
+                    <span class="size">4.42 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656796733440" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1344550/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《战争空间：策略/Warspace 2》多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">1 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656700264448" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2225960/425f6fbdcab44710187348f88bf9a7ccf16ee193/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《菜鸟来了/Noobs Are Coming》多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">97 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656545075200" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/761830/500622b10e11a31f4d758c9761a4feb97a1affc0/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《末日准备狂/Mr. Prepper》v1.34h多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">1.81 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>动作游戏</span><a href="?page=games&tag_id=862115227997569024" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483657060974592" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1647310/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《卫国战争/The Patriotic War》v0.72.002.10多国语言（含简体中文）免安装</h3>
+                <div class="game-meta">
+                    <span class="size">942 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656796733440" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1344550/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《战争空间：策略/Warspace 2》多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">1 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656700264448" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2225960/425f6fbdcab44710187348f88bf9a7ccf16ee193/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《菜鸟来了/Noobs Are Coming》多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">97 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656654127104" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1955030/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《收容失效/SCP: EVENT CLASSIFIED》多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">3 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>冒险游戏</span><a href="?page=games&tag_id=862115228035317760" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483666464604160" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《亥灵胎/SCHiM—Build 15027939多国语言（含简体中文）免安装解压即玩版》</h3>
+                <div class="game-meta">
+                    <span class="size">525 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656545075200" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/761830/500622b10e11a31f4d758c9761a4feb97a1affc0/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《末日准备狂/Mr. Prepper》v1.34h多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">1.81 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483642003423232" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/274190/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《武装原型/Broforce》v3148多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">389 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483641944702976" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3575730/1927bdcf248e5232a8dfb5209461ff87c5653a4b/header_schinese.jpg')"></div>
+            <div class="game-info">
+                <h3>《醉醺醺 兔兔秘密花园/MERRY BUNNY GARDEN》v1.0.0多国语言（含简体中文）免安</h3>
+                <div class="game-meta">
+                    <span class="size">1.58 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>策略棋牌</span><a href="?page=games&tag_id=862115228068872192" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483666342969344" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《112接线员/112 Operator》v0.221004多国语言（含简体中文）免安装解压即</h3>
+                <div class="game-meta">
+                    <span class="size">1.37 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483657060974592" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1647310/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《卫国战争/The Patriotic War》v0.72.002.10多国语言（含简体中文）免安装</h3>
+                <div class="game-meta">
+                    <span class="size">942 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483657010642944" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3709490/21728eff44122faa55ad0b5f6eaed144d4007895/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《星际点击奥德赛/Star Clicker Odyssey》v1.0.0多国语言（含简体中文）免安装</h3>
+                <div class="game-meta">
+                    <span class="size">801 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656914173952" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3225790/8d81a7cac01902c3314d8797d3f29b6de54c46a0/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《野性崛起/Wildrise》多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">98 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>益智休闲</span><a href="?page=games&tag_id=862115228228255744" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483666552684544" class="game-card">
+            <div class="game-cover" style="background-image: url('https://www.danjipai.com/common/static/images/nopic.jpg')"></div>
+            <div class="game-info">
+                <h3>《壁纸引擎/Wallpaper Engine》v2.6.21多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">215 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483666464604160" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《亥灵胎/SCHiM—Build 15027939多国语言（含简体中文）免安装解压即玩版》</h3>
+                <div class="game-meta">
+                    <span class="size">525 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483657010642944" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3709490/21728eff44122faa55ad0b5f6eaed144d4007895/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《星际点击奥德赛/Star Clicker Odyssey》v1.0.0多国语言（含简体中文）免安装</h3>
+                <div class="game-meta">
+                    <span class="size">801 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483656914173952" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3225790/8d81a7cac01902c3314d8797d3f29b6de54c46a0/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《野性崛起/Wildrise》多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">98 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>体育竞技</span><a href="?page=games&tag_id=862115228261810176" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483534914453504" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2717010/52f4b6ad5b54f3c86ee83b248192242142e19389/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《卡尔帕：宇宙交响曲/KALPA: Cosmic Symphony》v1.0.0多国语言（含简体中文</h3>
+                <div class="game-meta">
+                    <span class="size">3.72 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483468652838912" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3304320/532b7cd2f7e5548f34021e5da7a5e8e6c2d828f0/header_schinese.jpg')"></div>
+            <div class="game-info">
+                <h3>《中国足球模拟器》v5.57多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">6.26 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483454144741376" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3058630/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《神力科莎EVO》多国语言（含简体中文）免安装解压即玩抢先体验版</h3>
+                <div class="game-meta">
+                    <span class="size">13.01 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483454098604032" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1924170/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《曼岛TT赛：边缘竞速3 》v20250122多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">10.71 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>赛车竞速</span><a href="?page=games&tag_id=862115228282781696" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483454186684416" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1293830/header_schinese.jpg')"></div>
+            <div class="game-info">
+                <h3>《极限竞速：地平线 4终极版 》 v1.478.564多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">88.91 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483454144741376" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3058630/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《神力科莎EVO》多国语言（含简体中文）免安装解压即玩抢先体验版</h3>
+                <div class="game-meta">
+                    <span class="size">13.01 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483454098604032" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1924170/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《曼岛TT赛：边缘竞速3 》v20250122多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">10.71 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483454048272384" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1650010/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《极速骑行5/Ride 5》B 13410226多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">45.01 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>模拟经营</span><a href="?page=games&tag_id=862115228316336128" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483666426855424" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.cdn.queniuqe.com/store_item_assets/steam/apps/1444480/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《图灵完备/Turing Complete》v2.0.16多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">232 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483666384912384" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/942970/header_schinese.jpg')"></div>
+            <div class="game-info">
+                <h3>《疑案追声/Unheard - Voices of Crime》v67214多国语言（含简体中文）免</h3>
+                <div class="game-meta">
+                    <span class="size">4.42 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483666342969344" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《112接线员/112 Operator》v0.221004多国语言（含简体中文）免安装解压即</h3>
+                <div class="game-meta">
+                    <span class="size">1.37 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483657010642944" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3709490/21728eff44122faa55ad0b5f6eaed144d4007895/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《星际点击奥德赛/Star Clicker Odyssey》v1.0.0多国语言（含简体中文）免安装</h3>
+                <div class="game-meta">
+                    <span class="size">801 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>独立游戏</span><a href="?page=games&tag_id=862115228391833600" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483666607210496" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1689080/header_schinese.jpg')"></div>
+            <div class="game-info">
+                <h3>《水银疗养院（Mercury Abbey）》 v1.0.4多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">906 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483666552684544" class="game-card">
+            <div class="game-cover" style="background-image: url('https://www.danjipai.com/common/static/images/nopic.jpg')"></div>
+            <div class="game-info">
+                <h3>《壁纸引擎/Wallpaper Engine》v2.6.21多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">215 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483666519130112" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/3622490/c7664d005a095889e7775346502725dabf344f91/header_schinese.jpg')"></div>
+            <div class="game-info">
+                <h3>《重生之我在米国找厕所/Rebirth:Which is my toilet》多国语言（含简体中文）</h3>
+                <div class="game-meta">
+                    <span class="size">361 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483666464604160" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1519710/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《亥灵胎/SCHiM—Build 15027939多国语言（含简体中文）免安装解压即玩版》</h3>
+                <div class="game-meta">
+                    <span class="size">525 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+<section class="category-section">
+    <h2><span>其他游戏</span><a href="?page=games&tag_id=862115228391835678" class="more-link">>></a></h2>
+    <div class="game-grid">
+                <a href="?page=detail&id=864483642095697920" class="game-card">
+            <div class="game-cover" style="background-image: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1641890/header.jpg')"></div>
+            <div class="game-info">
+                <h3>《世外之欲/Lust from beyond》多国语言（含简体中文）免安装解压即玩版</h3>
+                <div class="game-meta">
+                    <span class="size">16.85 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483606360227840" class="game-card">
+            <div class="game-cover" style="background-image: url('https://www.danjipai.com/uploads/202501/09/250109014435772.jpg')"></div>
+            <div class="game-info">
+                <h3>《微软常用游戏必备运行库合集》</h3>
+                <div class="game-meta">
+                    <span class="size">58 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483606322479104" class="game-card">
+            <div class="game-cover" style="background-image: url('https://www.danjipai.com/uploads/202501/11/250111020956875.jpg')"></div>
+            <div class="game-info">
+                <h3>《骑马与砍杀》v14.5.11(原版1.011)最后的明朝 : 明末风云MOD</h3>
+                <div class="game-meta">
+                    <span class="size">121 MB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+                <a href="?page=detail&id=864483606293118976" class="game-card">
+            <div class="game-cover" style="background-image: url('https://www.danjipai.com/uploads/202502/08/250208015720559.png')"></div>
+            <div class="game-info">
+                <h3>《游戏常用运行库 合集》</h3>
+                <div class="game-meta">
+                    <span class="size">1.38 GB</span>
+                    <span class="date">2026-07-13</span>
+                </div>
+            </div>
+        </a>
+            </div>
+</section>
+</div>
+</main>
+
+<footer>
+    <p>&copy; 游戏基地</p>
+</footer>
+
+<div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+window.addEventListener('scroll', function() {
+    document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 300);
+});
+</script>
+</body>
+</html>

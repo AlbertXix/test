@@ -7,6 +7,10 @@ $game->execute([':id' => $id]);
 $game = $game->fetch(\PDO::FETCH_ASSOC);
 if (!$game) { echo '<p>游戏不存在</p>'; return; }
 
+$gameContent = htmlspecialchars_decode($game['content'], ENT_QUOTES);
+// $gameContent = str_replace('<pre', '<div', $gameContent);
+// $gameContent = str_replace('</pre>', '</div>', $gameContent);
+
 $gameTags = $pdo->prepare('SELECT t.tag_name FROM bo_tag t JOIN bo_game_tag gt ON gt.tag_id = t.id WHERE gt.game_id = :game_id');
 $gameTags->execute([':game_id' => $id]);
 $gameTags = $gameTags->fetchAll(\PDO::FETCH_COLUMN);
@@ -18,7 +22,7 @@ $screenshots = $screenshots->fetchAll(\PDO::FETCH_ASSOC);
 
 <section class="detail-page">
     <div class="detail-header">
-        <div class="detail-cover" style="background-image: url('<?= htmlspecialchars($game['cover_image'] ?: $game['cover_image_local'] ?: '/Public/up/default.jpg') ?>')"></div>
+        <div class="detail-cover" style="background-image: url('<?= htmlspecialchars($game['cover_image'] ?: $game['cover_image_local'] ?: '/Public/up/nopic.jpg') ?>')"></div>
         <div class="detail-info">
             <h1><?= htmlspecialchars($game['title']) ?></h1>
             <!-- <?php if ($game['title_en']): ?><p class="title-en">英文名: <?= htmlspecialchars($game['title_en']) ?></p><?php endif; ?> -->
@@ -26,7 +30,7 @@ $screenshots = $screenshots->fetchAll(\PDO::FETCH_ASSOC);
                 <?php if (!empty($gameTags)): ?>
                 <p><strong>类型：</strong><?= htmlspecialchars(implode(' / ', $gameTags)) ?></p>
                 <?php endif; ?>
-                <?php if ($game['resource_size']): ?><p><strong>大小：</strong><?= round($game['resource_size'] / 1024, 1) ?> GB</p><?php endif; ?>
+                <?php if ($game['resource_size']): ?><p><strong>大小：</strong><?= intval($game['resource_size']) > 1024 ? round(intval($game['resource_size']) / 1024, 2) . ' GB' : intval($game['resource_size']) . ' MB' ?></p><?php endif; ?>
                 <?php if ($game['release_date']): ?><p><strong>发行日期：</strong><?= $game['release_date'] ?></p><?php endif; ?>
                 <?php if ($game['developer']): ?><p><strong>开发商：</strong><?= htmlspecialchars($game['developer']) ?></p><?php endif; ?>
                 <?php if ($game['system_platform']): ?><p><strong>运行环境：</strong><?= htmlspecialchars($game['system_platform']) ?></p><?php endif; ?>
@@ -90,7 +94,7 @@ $screenshots = $screenshots->fetchAll(\PDO::FETCH_ASSOC);
     <?php if ($game['content']): ?>
     <div class="game-content">
         <!-- <h2>游戏介绍</h2> -->
-        <div class="content-body"><?= htmlspecialchars_decode($game['content'], ENT_QUOTES) ?></div>
+        <div class="content-body"><?= $gameContent ?></div>
     </div>
     <?php endif; ?>
 </section>

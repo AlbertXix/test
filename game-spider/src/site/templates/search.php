@@ -1,14 +1,3 @@
-<?php
-$q = isset($_GET['q']) ? trim($_GET['q']) : '';
-$results = [];
-if ($q !== '') {
-    $like = '%' . $q . '%';
-    $stmt = $pdo->prepare("SELECT DISTINCT g.id, g.title, g.resource_size, g.cover_image_local, g.release_date FROM bo_game g WHERE g.title LIKE :q ORDER BY g.id DESC LIMIT 60");
-    $stmt->execute([':q' => $like]);
-    $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
-?>
-
 <section class="search-page">
     <div class="search-header">
         <form class="search-box" action="?page=search" method="get">
@@ -27,12 +16,12 @@ if ($q !== '') {
     <div class="game-grid four-col">
         <?php foreach ($results as $g): ?>
         <a href="?page=detail&id=<?= $g['id'] ?>" class="game-card">
-            <div class="game-cover" style="background-image: url('<?= htmlspecialchars($g['cover_image_local'] ?: '/Public/up/default.jpg') ?>')"></div>
+            <div class="game-cover" style="background-image: url('<?= htmlspecialchars($g['cover_image'] ?: $g['cover_image_local'] ?: '/Public/up/nopic.jpg') ?>')"></div>
             <div class="game-info">
                 <h3><?= htmlspecialchars(mb_substr($g['title'], 0, 28)) ?></h3>
                 <div class="game-meta">
-                    <span class="size"><?= $g['resource_size'] ? round($g['resource_size'] / 1024, 1) . ' GB' : '' ?></span>
-                    <span class="date"><?= $g['release_date'] ?? '' ?></span>
+                    <span class="size"><?= intval($g['resource_size']) > 1024 ? round(intval($g['resource_size']) / 1024, 2) . ' GB' : intval($g['resource_size']) . ' MB' ?></span>
+                    <span class="date"><?= date('Y-m-d', strtotime($g['created_time'])) ?? '' ?></span>
                 </div>
             </div>
         </a>
