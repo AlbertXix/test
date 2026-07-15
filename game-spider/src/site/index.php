@@ -36,7 +36,7 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
 require __DIR__ . '/engine/Logger.php';
 $logger = new Logger(__DIR__ . '/logs', $isDev ? Logger::DEBUG : Logger::INFO);
 ErrorHandler::setLogger($logger);
-$logger->debug('Request: ' . $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI']);
+$logger->debug('Client: ' . $_SERVER['REMOTE_ADDR'] . ', ' . 'Request: ' . $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI']);
 
 require __DIR__ . '/engine/BotDetector.php';
 $bot = new BotDetector();
