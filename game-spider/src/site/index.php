@@ -17,6 +17,7 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
         echo 'Cross-origin requests are not allowed';
         exit;
     }
+    header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
 }
 
 require __DIR__ . '/engine/BotDetector.php';
