@@ -4,6 +4,9 @@ ini_set('display_errors', '1');
 date_default_timezone_set('PRC');
 set_time_limit(15);
 
+require __DIR__ . '/engine/ErrorHandler.php';
+ErrorHandler::init();
+
 session_start();
 
 define('SITE_PATH', dirname(__FILE__));
@@ -32,6 +35,7 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
 
 require __DIR__ . '/engine/Logger.php';
 $logger = new Logger(__DIR__ . '/logs', $isDev ? Logger::DEBUG : Logger::INFO);
+ErrorHandler::setLogger($logger);
 $logger->debug('Request: ' . $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI']);
 
 require __DIR__ . '/engine/BotDetector.php';
