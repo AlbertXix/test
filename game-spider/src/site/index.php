@@ -4,6 +4,17 @@ session_start();
 require __DIR__ . '/engine/BotDetector.php';
 $bot = new BotDetector();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_ch_token'])) {
+    if ($bot->validateChallengeToken($_POST['_ch_token'])) {
+        $bot->markPassed();
+        header('Location: ' . $_SERVER['REQUEST_URI'], true, 303);
+        exit;
+    }
+    http_response_code(403);
+    echo '验证失败';
+    exit;
+}
+
 if ($bot->isBlocked()) {
     http_response_code(403);
     echo 'Access denied';
@@ -16,7 +27,7 @@ if ($bot->isSearchEngine()) {
     $score = $bot->getFingerprintScore();
     $rateExceeded = $bot->checkRate();
 
-    if (!$bot->hasChallengeCookie() && ($score >= 40 || $rateExceeded)) {
+    if (!$bot->hasPassedChallenge() && ($score >= 40 || $rateExceeded)) {
         $bot->markCrawler();
         if ($score >= 60 || $rateExceeded) {
             $bot->blockIP();

@@ -79,11 +79,24 @@ class BotDetector
         return $count > $this->rateLimit;
     }
 
-    public function hasChallengeCookie(): bool
+    public function hasPassedChallenge(): bool
     {
-        $token = $_COOKIE['_ch'] ?? '';
+        return !empty($_SESSION['challenge_passed']);
+    }
+
+    public function validateChallengeToken(string $token): bool
+    {
         if (!$token || !$this->redis) return false;
-        return (bool) $this->redis->get("challenge:{$token}");
+        $key = "challenge:{$token}";
+        $stored = $this->redis->get($key);
+        if ($stored === false) return false;
+        $this->redis->del($key);
+        return $stored === $this->ip;
+    }
+
+    public function markPassed(): void
+    {
+        $_SESSION['challenge_passed'] = true;
     }
 
     public function issueChallenge(): never
@@ -93,7 +106,7 @@ class BotDetector
             $this->redis->setex("challenge:{$token}", 300, $this->ip);
         }
 
-        $redirect = $_SERVER['REQUEST_URI'] ?? '/';
+        $action = $_SERVER['REQUEST_URI'] ?? '/';
         http_response_code(403);
         ?>
 <!DOCTYPE html>
@@ -114,17 +127,11 @@ p { color: #666; font-size: 14px; line-height: 1.6; }
 <div class="card">
     <div class="spinner"></div>
     <p>验证浏览器环境，请稍候...</p>
+    <form id="challenge" action="<?= htmlspecialchars($action, ENT_QUOTES) ?>" method="POST">
+        <input type="hidden" name="_ch_token" value="<?= $token ?>">
+    </form>
 </div>
-<script>
-(function() {
-    var d = new Date();
-    d.setTime(d.getTime() + 86400 * 1000);
-    document.cookie = '_ch=<?= $token ?>; expires=' + d.toUTCString() + '; path=/';
-    setTimeout(function() {
-        location.href = '<?= htmlspecialchars($redirect, ENT_QUOTES) ?>';
-    }, 1500);
-})();
-</script>
+<script>document.getElementById('challenge').submit();</script>
 </body>
 </html>
 <?php
@@ -155,7 +162,7 @@ p { color: #666; font-size: 14px; line-height: 1.6; }
         if ($this->isSearchEngine()) return true;
         $score = $this->getFingerprintScore();
         $rateExceeded = $this->checkRate();
-        $hasChallenge = $this->hasChallengeCookie();
+        $hasChallenge = $this->hasPassedChallenge();
 
         if ($score >= 40 || $rateExceeded) {
             if (!$hasChallenge) {
