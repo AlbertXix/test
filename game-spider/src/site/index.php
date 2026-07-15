@@ -21,8 +21,23 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
     header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
 }
 
+require __DIR__ . '/engine/Logger.php';
+$logger = new Logger(__DIR__ . '/logs', $isDev ? Logger::DEBUG : Logger::INFO);
+$logger->debug('Request: ' . $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI']);
+
 require __DIR__ . '/engine/BotDetector.php';
 $bot = new BotDetector();
+
+require __DIR__ . '/engine/SqlInjectDetector.php';
+$sqliInputs = array_merge($_GET, $_POST, $_COOKIE);
+foreach ($sqliInputs as $key => $value) {
+    if (SqlInjectDetector::hasInjection($value)) {
+        $bot->reportSqlInjection($logger);
+        http_response_code(403);
+        echo 'Request blocked';
+        exit;
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_ch_token'])) {
     if ($bot->validateChallengeToken($_POST['_ch_token'])) {

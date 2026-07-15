@@ -157,6 +157,18 @@ p { color: #666; font-size: 14px; line-height: 1.6; }
         return (bool) $this->redis->get("crawler:{$this->ip}");
     }
 
+    public function reportSqlInjection(Logger $logger): void
+    {
+        if (!$this->redis) return;
+        $key = "sqli:{$this->ip}";
+        $count = $this->redis->incr($key);
+        $logger->warn("SQL injection detected from {$this->ip} (count: {$count})");
+        if ($count >= 2) {
+            $this->redis->set("blocked:{$this->ip}", '1');
+            $logger->error("IP {$this->ip} permanently blocked for SQL injection");
+        }
+    }
+
     public function isHuman(): bool
     {
         if ($this->isSearchEngine()) return true;

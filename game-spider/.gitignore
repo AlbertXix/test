@@ -1,3 +1,4 @@
 /src/site/cache/
+/src/site/logs/
 composer-setup.php
 composer-temp.phar
