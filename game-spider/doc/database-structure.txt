@@ -29,6 +29,7 @@
 | is_top            | tinyint unsigned |            |                                               | NO          | 0                 | 是否置顶           |
 | is_head           | tinyint unsigned |            |                                               | NO          | 0                 | 是否头条           |
 | is_hot            | tinyint unsigned |            |                                               | NO          | 0                 | 是否热门           |
+| visible           | tinyint unsigned |            |                                               | NO          | 1                 | 是否可见           |
 | click             | int unsigned     |            |                                               | NO          | 0                 | 点击量             |
 | created_by        | varchar(32)      |            |                                               | NO          |                   | 发布人             |
 | created_time      | datetime         |            | DEFAULT_GENERATED                             | NO          | CURRENT_TIMESTAMP | 创建时间           |

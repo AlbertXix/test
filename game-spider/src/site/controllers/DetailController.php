@@ -21,7 +21,7 @@ class DetailController
         $screenshots = [];
 
         if ($id) {
-            $stmt = $this->pdo->prepare('SELECT * FROM bo_game WHERE id = :id');
+            $stmt = $this->pdo->prepare('SELECT * FROM bo_game WHERE id = :id AND visible = 1');
             $stmt->execute([':id' => $id]);
             $game = $stmt->fetch(\PDO::FETCH_ASSOC);
 

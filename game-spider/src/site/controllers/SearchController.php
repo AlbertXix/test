@@ -22,7 +22,7 @@ class SearchController
         if ($q !== '') {
             $like = '%' . $q . '%';
 
-            $countStmt = $this->pdo->prepare("SELECT COUNT(DISTINCT g.id) FROM bo_game g WHERE g.title LIKE :q");
+            $countStmt = $this->pdo->prepare("SELECT COUNT(DISTINCT g.id) FROM bo_game g WHERE g.title LIKE :q AND g.visible = 1");
             $countStmt->execute([':q' => $like]);
             $total = (int) $countStmt->fetchColumn();
 
@@ -32,7 +32,7 @@ class SearchController
                 $offset = ($pageNum - 1) * $perPage;
 
                 $sql = "SELECT DISTINCT g.id, g.title, g.resource_size, g.cover_image, g.cover_image_local, g.release_date, g.created_time " .
-                    "FROM bo_game g WHERE g.title LIKE :q ORDER BY g.id DESC LIMIT $perPage OFFSET $offset";
+                    "FROM bo_game g WHERE g.title LIKE :q AND g.visible = 1 ORDER BY g.id DESC LIMIT $perPage OFFSET $offset";
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute([':q' => $like]);
                 $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);

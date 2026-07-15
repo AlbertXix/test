@@ -17,7 +17,7 @@ class HomeController
 
         $latestByTag = [];
         foreach ($tags as $tag) {
-            $stmt = $this->pdo->prepare('SELECT g.id, g.title, g.title_en, g.resource_size, g.cover_image, g.cover_image_local, g.created_time, g.description FROM bo_game g JOIN bo_game_tag gt ON gt.game_id = g.id WHERE gt.tag_id = :tag_id ORDER BY g.id DESC LIMIT 4');
+            $stmt = $this->pdo->prepare('SELECT g.id, g.title, g.title_en, g.resource_size, g.cover_image, g.cover_image_local, g.created_time, g.description FROM bo_game g JOIN bo_game_tag gt ON gt.game_id = g.id WHERE gt.tag_id = :tag_id AND g.visible = 1 ORDER BY g.id DESC LIMIT 4');
             $stmt->execute([':tag_id' => $tag['id']]);
             $games = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             if (!empty($games)) {
@@ -30,7 +30,7 @@ class HomeController
             }
         }
 
-        $focusGames = $this->pdo->query('SELECT id, title, cover_image, cover_image_local, description FROM bo_game WHERE is_focus = 1 ORDER BY is_top DESC, id DESC LIMIT 10')->fetchAll(\PDO::FETCH_ASSOC);
+        $focusGames = $this->pdo->query('SELECT id, title, cover_image, cover_image_local, description FROM bo_game WHERE is_focus = 1 AND visible = 1 ORDER BY is_top DESC, id DESC LIMIT 10')->fetchAll(\PDO::FETCH_ASSOC);
 
         return [
             'tags' => $tags,

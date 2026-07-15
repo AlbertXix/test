@@ -12,6 +12,7 @@ session_start();
 define('SITE_PATH', dirname(__FILE__));
 define('SRC_PATH', dirname(dirname(__FILE__)));
 define('CFG_PATH', SRC_PATH . '/Config');
+define('LOG_PATH', '/var/log/game-site');
 
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $hostName = explode(':', $host)[0];
@@ -34,7 +35,7 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
 }
 
 require __DIR__ . '/engine/Logger.php';
-$logger = new Logger(__DIR__ . '/logs', $isDev ? Logger::DEBUG : Logger::INFO);
+$logger = new Logger(LOG_PATH, $isDev ? Logger::DEBUG : Logger::INFO);
 ErrorHandler::setLogger($logger);
 $logger->debug('Client: ' . $_SERVER['REMOTE_ADDR'] . ', ' . 'Request: ' . $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI']);
 

@@ -19,20 +19,21 @@ class GamesController
         $pageNum = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
         $perPage = 20;
 
-        $where = '';
+        $where = 'WHERE g.visible = 1';
+        $join = '';
         $params = [];
         if ($activeTagId) {
-            $where = 'JOIN bo_game_tag gt2 ON gt2.game_id = g.id AND gt2.tag_id = :tag_id';
+            $join = 'JOIN bo_game_tag gt2 ON gt2.game_id = g.id AND gt2.tag_id = :tag_id';
             $params[':tag_id'] = $activeTagId;
         }
 
-        $totalStmt = $this->pdo->prepare("SELECT COUNT(DISTINCT g.id) FROM bo_game g $where");
+        $totalStmt = $this->pdo->prepare("SELECT COUNT(DISTINCT g.id) FROM bo_game g $join $where");
         $totalStmt->execute($params);
         $total = (int) $totalStmt->fetchColumn();
         $maxPage = max(1, ceil($total / $perPage));
         $offset = ($pageNum - 1) * $perPage;
 
-        $sql = "SELECT DISTINCT g.id, g.title, g.resource_size, g.cover_image, g.cover_image_local, g.created_time FROM bo_game g $where ORDER BY g.id DESC LIMIT $perPage OFFSET $offset";
+        $sql = "SELECT DISTINCT g.id, g.title, g.resource_size, g.cover_image, g.cover_image_local, g.created_time FROM bo_game g $join $where ORDER BY g.id DESC LIMIT $perPage OFFSET $offset";
         $games = $this->pdo->prepare($sql);
         $games->execute($params);
         $games = $games->fetchAll(\PDO::FETCH_ASSOC);
