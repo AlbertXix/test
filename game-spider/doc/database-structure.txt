@@ -1,36 +1,41 @@
 `bo_game` 表结构:
-+-------------------+-----------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
-| COLUMN_NAME       | COLUMN_TYPE     | COLUMN_KEY | EXTRA                                         | IS_NULLABLE | COLUMN_DEFAULT    | COLUMN_COMMENT     |
-+-------------------+-----------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
-| id                | bigint unsigned | PRI        |                                               | NO          | NULL              | 主键               |
-| category_id       | int unsigned    |            |                                               | NO          | 1                 | 分类ID             |
-| title             | varchar(255)    |            |                                               | NO          | NULL              | 标题               |
-| title_en          | varchar(255)    |            |                                               | NO          |                   | 英文标题           |
-| keywords          | varchar(255)    |            |                                               | NO          |                   | 关键词             |
-| description       | varchar(255)    |            |                                               | NO          |                   | 关键词描述         |
-| resource_size     | int unsigned    |            |                                               | NO          | NULL              | 资源大小           |
-| system_platform   | varchar(255)    |            |                                               | NO          | NULL              | 系统平台           |
-| release_date      | date            |            |                                               | YES         | NULL              | 发行日期           |
-| developer         | varchar(255)    |            |                                               | NO          | NULL              | 开发商             |
-| serial            | varchar(255)    |            |                                               | NO          | NULL              | 系列               |
-| home_page         | varchar(255)    |            |                                               | NO          | NULL              | 官方网站           |
-| source_url        | varchar(255)    |            |                                               | NO          |                   | 来源URL            |
-| score             | float unsigned  |            |                                               | NO          | 0                 | 评分               |
-| user_give_score   | float unsigned  |            |                                               | NO          | 0                 | 用户评分           |
-| click             | double unsigned |            |                                               | NO          | 0                 | 点击量             |
-| cover_image       | varchar(255)    |            |                                               | NO          | NULL              | 封面图             |
-| cover_image_local | varchar(255)    |            |                                               | NO          |                   | 本地封面图         |
-| content           | text            |            |                                               | NO          | NULL              | 内容               |
-| download_total    | int unsigned    |            |                                               | NO          | NULL              | 总下载量           |
-| download_url      | varchar(255)    |            |                                               | NO          |                   | 下载地址           |
-| baidu_url         | varchar(255)    |            |                                               | NO          |                   | 百度盘下载URL      |
-| xunlei_url        | varchar(255)    |            |                                               | NO          |                   | 迅雷盘下载URL      |
-| quark_url         | varchar(255)    |            |                                               | NO          |                   | 夸克盘下载URL      |
-| created_by        | varchar(32)     |            |                                               | NO          |                   | 发布人             |
-| created_time      | datetime        |            | DEFAULT_GENERATED                             | NO          | CURRENT_TIMESTAMP | 创建时间           |
-| updated_by        | varchar(32)     |            |                                               | NO          |                   | 更新人             |
-| updated_time      | datetime        |            | DEFAULT_GENERATED on update CURRENT_TIMESTAMP | NO          | CURRENT_TIMESTAMP | 更新时间           |
-+-------------------+-----------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
++-------------------+------------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
+| COLUMN_NAME       | COLUMN_TYPE      | COLUMN_KEY | EXTRA                                         | IS_NULLABLE | COLUMN_DEFAULT    | COLUMN_COMMENT     |
++-------------------+------------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
+| id                | bigint unsigned  | PRI        |                                               | NO          | NULL              | 主键               |
+| category_id       | int unsigned     |            |                                               | NO          | 1                 | 分类ID             |
+| title             | varchar(255)     | UNI        |                                               | NO          | NULL              | 标题               |
+| title_en          | varchar(255)     |            |                                               | NO          |                   | 英文标题           |
+| keywords          | varchar(255)     |            |                                               | NO          |                   | 关键词             |
+| description       | varchar(255)     |            |                                               | NO          |                   | 关键词描述         |
+| resource_size     | int unsigned     |            |                                               | NO          | NULL              | 资源大小           |
+| system_platform   | varchar(255)     |            |                                               | NO          | NULL              | 系统平台           |
+| release_date      | date             |            |                                               | YES         | NULL              | 发行日期           |
+| developer         | varchar(255)     |            |                                               | NO          | NULL              | 开发商             |
+| serial            | varchar(255)     |            |                                               | NO          | NULL              | 系列               |
+| home_page         | varchar(255)     |            |                                               | NO          | NULL              | 官方网站           |
+| source_url        | varchar(255)     | UNI        |                                               | NO          |                   | 来源URL            |
+| score             | float unsigned   |            |                                               | NO          | 0                 | 评分               |
+| user_give_score   | float unsigned   |            |                                               | NO          | 0                 | 用户评分           |
+| cover_image       | varchar(255)     |            |                                               | NO          | NULL              | 封面图             |
+| cover_image_local | varchar(255)     |            |                                               | NO          |                   | 本地封面图         |
+| content           | text             |            |                                               | NO          | NULL              | 内容               |
+| download_total    | int unsigned     |            |                                               | NO          | NULL              | 总下载量           |
+| download_url      | varchar(255)     |            |                                               | NO          |                   | 下载地址           |
+| baidu_url         | varchar(255)     |            |                                               | NO          |                   | 百度盘下载URL      |
+| xunlei_url        | varchar(255)     |            |                                               | NO          |                   | 迅雷盘下载URL      |
+| quark_url         | varchar(255)     |            |                                               | NO          |                   | 夸克盘下载URL      |
+| is_focus          | tinyint unsigned |            |                                               | NO          | 0                 | 是否焦点图         |
+| is_top            | tinyint unsigned |            |                                               | NO          | 0                 | 是否置顶           |
+| is_head           | tinyint unsigned |            |                                               | NO          | 0                 | 是否头条           |
+| is_hot            | tinyint unsigned |            |                                               | NO          | 0                 | 是否热门           |
+| visible           | tinyint unsigned |            |                                               | NO          | 1                 | 是否可见           |
+| click             | int unsigned     |            |                                               | NO          | 0                 | 点击量             |
+| created_by        | varchar(32)      |            |                                               | NO          |                   | 发布人             |
+| created_time      | datetime         |            | DEFAULT_GENERATED                             | NO          | CURRENT_TIMESTAMP | 创建时间           |
+| updated_by        | varchar(32)      |            |                                               | NO          |                   | 更新人             |
+| updated_time      | datetime         |            | DEFAULT_GENERATED on update CURRENT_TIMESTAMP | NO          | CURRENT_TIMESTAMP | 更新时间           |
++-------------------+------------------+------------+-----------------------------------------------+-------------+-------------------+--------------------+
 
 `bo_tag` 表结构:
 +-------------+-----------------+------------+-------+-------------+----------------+----------------+

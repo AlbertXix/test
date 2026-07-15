@@ -1,0 +1,7 @@
+/src/site/cache/
+/src/site/logs/
+/logs/
+/vendor/
+/composer.phar
+composer-setup.php
+composer-temp.phar

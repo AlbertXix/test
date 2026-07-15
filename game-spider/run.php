@@ -2,6 +2,19 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+error_reporting(E_ALL);
+date_default_timezone_set('PRC');
+
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\ErrorHandler;
+
+$logDir = __DIR__ . '/var/log/game-spider';
+if (!is_dir($logDir)) mkdir($logDir, 0755, true);
+$logger = new Logger('spider');
+$logger->pushHandler(new StreamHandler($logDir . '/spider.log', Logger::DEBUG));
+ErrorHandler::register($logger);
+
 use GameSpider\Container\Container;
 use GameSpider\Selector\CssSelector;
 use GameSpider\Selector\XPathSelector;

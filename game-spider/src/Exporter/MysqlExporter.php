@@ -3,6 +3,7 @@
 namespace GameSpider\Exporter;
 
 use GameSpider\Util\SnowflakeIdGenerator;
+use GameSpider\Util\GameUtils;
 
 class MysqlExporter
 {
@@ -35,14 +36,15 @@ class MysqlExporter
 
     private function gameExists(string $title): bool
     {
-        $title = str_replace(['》——', '》 ——', '》—'], '》', $title);
+        $title = trim($title);
+        $uniformTitle = GameUtils::uniformTitle($title);
         $clean = trim(str_replace(['《', '》'], '', $title));
         if ($clean === '') {
             return false;
         }
 
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM bo_game WHERE title = :title OR REPLACE(REPLACE(title, '《', ''), '》', '') = :clean");
-        $stmt->execute([':title' => $title, ':clean' => $clean]);
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM bo_game WHERE title = :title OR title = :uniformTitle OR REPLACE(REPLACE(title, '《', ''), '》', '') = :clean");
+        $stmt->execute([':title' => $title, ':uniformTitle' => $uniformTitle, ':clean' => $clean]);
 
         return $stmt->fetchColumn() > 0;
     }
@@ -52,7 +54,7 @@ class MysqlExporter
         $title = $item['title'] ?? '';
         if ($title === '' || $this->gameExists($title)) {
             if ($title !== '') {
-                echo "    Skipping (duplicate): {$title}\n";
+                echo "    Skipping duplicate: {$item['url']}\t {$title}\n";
             }
             return;
         }

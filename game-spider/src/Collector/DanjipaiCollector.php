@@ -257,21 +257,4 @@ class DanjipaiCollector extends BaseCollector
         }
         return 0;
     }
-
-    // protected function fullImageUrl(string $imageUrl, string baseUrl = ''): string
-    // {
-    //     $fullImageUrl = trim(urldecode($imageUrl));
-    //     $ext = pathinfo(parse_url($fullImageUrl, PHP_URL_PATH), PATHINFO_EXTENSION);
-    //     if (strtolower($ext) === 'j') {
-    //         $fullImageUrl = str_ireplace($fullImageUrl, '.j', '.jpg');
-    //     }
-    //     if (stristr($fullImageUrl, '?t=')) {
-    //         $fullImageUrl = substr($fullImageUrl, 0, stripos($fullImageUrl, '?t='));
-    //     }
-    //     if (strpos($fullImageUrl, '/') === 0) {
-    //         $fullImageUrl = self::BASE_URL . $fullImageUrl;
-    //     }
-
-    //     return $fullImageUrl;
-    // }
 }

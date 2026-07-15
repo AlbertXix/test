@@ -4,6 +4,7 @@ namespace GameSpider\Collector;
 
 use GameSpider\Fetcher\PageFetcher;
 use GameSpider\Extractor\ContentExtractor;
+use GameSpider\Util\GameUtils;
 
 abstract class BaseCollector implements CollectorInterface
 {
@@ -61,10 +62,10 @@ abstract class BaseCollector implements CollectorInterface
 
     protected function wrapTitle(string $title): string
     {
-        if ($title !== '' && !str_contains($title, '《')) {
-            $title = "《{$title}》";
-        }
-        return str_replace(['》——', '》 ——', '》—'], '》', $title);
+        $title = trim($title);
+        if (!$title) return '';
+
+        return GameUtils::uniformTitle($title);
     }
 
     protected function extractEnglishFromTitle(string $title): string
@@ -82,17 +83,24 @@ abstract class BaseCollector implements CollectorInterface
 
     protected function sanitizeContent(string $raw): string
     {
+        $processed = preg_replace('/<[^>]+class="[^"]*articleDetailGroup[^"]*"[^>]*>(.*?)<\/[^>]+>/is', '$1', $raw);
+        $processed = preg_replace('/^\s*(?:(?:<p>\s*<br\s*\/?>\s*(?:<\/br>)?\s*<\/p>\s*)+|<p>\s*<br\s*\/?>\s*)/i', '', $processed);
+
         $placeholders = [];
 
         $processed = preg_replace_callback('/<img[^>]+>/i', function ($m) use (&$placeholders) {
             $key = "\x00IMG" . count($placeholders) . "\x00";
             $placeholders[$key] = $m[0];
             return $key;
-        }, $raw);
+        }, $processed);
 
         $processed = preg_replace_callback('/<video[^>]*>.*?<\/video>/is', function ($m) use (&$placeholders) {
             $key = "\x00VID" . count($placeholders) . "\x00";
-            $placeholders[$key] = $m[0];
+            if (preg_match('/poster\s*=\s*"([^"]+)"/i', $m[0], $p)) {
+                $placeholders[$key] = '<img src="' . htmlspecialchars($p[1]) . '">';
+            } else {
+                $placeholders[$key] = '';
+            }
             return $key;
         }, $processed);
 
@@ -139,10 +147,10 @@ abstract class BaseCollector implements CollectorInterface
 
                     foreach ($detailUrls as $url) {
                         try {
-                            echo "    Fetching detail: {$url}\n";
                             $detailHtml = $this->fetcher->fetch($url);
                             $title = $this->extractTitle($detailHtml);
                             $content = $this->extractContent($detailHtml);
+                            echo "    Fetching detail... {$url}\t {$title}\n";
 
                             if ($this->minDate !== null) {
                                 $itemDate = $this->getItemDate($detailHtml);
