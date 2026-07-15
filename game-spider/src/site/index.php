@@ -1,6 +1,24 @@
 <?php
 session_start();
 
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$hostName = explode(':', $host)[0];
+if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') {
+    if (!in_array($hostName, ['localhost', '127.0.0.1', '::1'], true)) {
+        header('Location: https://' . $host . $_SERVER['REQUEST_URI'], true, 301);
+        exit;
+    }
+}
+
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    $originHost = parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_HOST) ?: '';
+    if ($originHost !== $hostName) {
+        http_response_code(403);
+        echo 'Cross-origin requests are not allowed';
+        exit;
+    }
+}
+
 require __DIR__ . '/engine/BotDetector.php';
 $bot = new BotDetector();
 
