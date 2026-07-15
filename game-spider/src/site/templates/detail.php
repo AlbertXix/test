@@ -77,5 +77,61 @@
         <div class="content-body"><?= $gameContent ?></div>
     </div>
     <?php endif; ?>
+
+    <?php
+    $downloads = [];
+    if ($game['xunlei_url']) $downloads[] = ['key' => 'xunlei', 'label' => '迅雷云盘', 'url' => $game['xunlei_url']];
+    if ($game['quark_url']) $downloads[] = ['key' => 'quark', 'label' => '夸克云盘', 'url' => $game['quark_url']];
+    if ($game['baidu_url']) $downloads[] = ['key' => 'baidu', 'label' => '百度云盘', 'url' => $game['baidu_url']];
+    if ($game['download_url']) $downloads[] = ['key' => 'direct', 'label' => '直接云盘', 'url' => $game['download_url']];
+    ?>
+    <?php if (!empty($downloads)): ?>
+    <div class="download-wrapper">
+        <h2>选择下载方式</h2>
+        <div class="download-buttons">
+            <?php foreach ($downloads as $d): ?>
+            <button class="download-btn" data-url="<?= htmlspecialchars($d['url']) ?>"><?= htmlspecialchars($d['label']) ?></button>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <div class="qr-modal" id="qrModal">
+        <div class="qr-modal-content">
+            <span class="qr-modal-close">&times;</span>
+            <h3>扫码下载</h3>
+            <img id="qrImage" src="" alt="二维码">
+        </div>
+    </div>
+
+    <script>
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    var qrModal = document.getElementById('qrModal');
+    var qrImage = document.getElementById('qrImage');
+
+    document.querySelectorAll('.download-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var url = this.dataset.url;
+            qrImage.src = '';
+            qrModal.style.display = 'flex';
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '?api=getDownloadQRCode', true);
+            xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var resp = JSON.parse(xhr.responseText);
+                    qrImage.src = resp.qr;
+                }
+            };
+            xhr.send('url=' + encodeURIComponent(url));
+        });
+    });
+
+    qrModal.addEventListener('click', function() {
+        this.style.display = 'none';
+    });
+    </script>
+    <?php endif; ?>
 </section>
 <?php endif; ?>

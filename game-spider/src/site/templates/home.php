@@ -11,6 +11,7 @@
     <div class="hero-content" id="heroContent">
         <p class="tagline">发现好游戏，畅玩无限</p>
         <form class="search-box" action="?page=search" method="get">
+            <input type="hidden" name="from" value="indexSearch">
             <input type="hidden" name="page" value="search">
             <input type="text" name="q" placeholder="搜索游戏名称..." autocomplete="off">
             <button type="submit">搜索</button>
@@ -33,6 +34,44 @@
     });
 })();
 </script>
+
+<?php if (!empty($focusGames)): ?>
+<div class="focus-slider">
+    <div class="swiper focusSwiper">
+        <div class="swiper-wrapper">
+            <?php foreach ($focusGames as $fg): ?>
+            <div class="swiper-slide">
+                <a href="?page=detail&id=<?= $fg['id'] ?>" class="focus-slide-inner" style="background-image: url('<?= htmlspecialchars($fg['cover_image'] ?: $fg['cover_image_local'] ?: '/Public/up/nopic.jpg') ?>')">
+                    <div class="focus-slide-title"><?= htmlspecialchars(mb_substr($fg['title'], 0, 50)) ?></div>
+                </a>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+
+<script>
+new Swiper('.focusSwiper', {
+    slidesPerView: 6,
+    spaceBetween: 12,
+    slidesOffsetBefore: 60,
+    slidesOffsetAfter: 60,
+    loop: true,
+    autoplay: { delay: 4000, disableOnInteraction: false },
+    navigation: { nextEl: '.focusSwiper .swiper-button-next', prevEl: '.focusSwiper .swiper-button-prev' },
+    pagination: { el: '.focusSwiper .swiper-pagination', clickable: true },
+    breakpoints: {
+        0: { slidesPerView: 2, slidesOffsetBefore: 20, slidesOffsetAfter: 20 },
+        500: { slidesPerView: 3, slidesOffsetBefore: 30, slidesOffsetAfter: 30 },
+        800: { slidesPerView: 4, slidesOffsetBefore: 40, slidesOffsetAfter: 40 },
+        1100: { slidesPerView: 6, slidesOffsetBefore: 60, slidesOffsetAfter: 60 }
+    }
+});
+</script>
+<?php endif; ?>
 
 <div class="category-grid">
 <?php foreach ($latestByTag as $group): ?>

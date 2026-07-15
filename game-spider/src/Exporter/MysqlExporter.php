@@ -36,7 +36,7 @@ class MysqlExporter
 
     private function gameExists(string $title): bool
     {
-        // $uniformTitleFunc = fn($theTitle) => str_ireplace(['》——', '》 ——', '》—', "——v", '——'], '》', $theTitle);
+        $title = trim($title);
         $uniformTitle = GameUtils::uniformTitle($title);
         $clean = trim(str_replace(['《', '》'], '', $title));
         if ($clean === '') {

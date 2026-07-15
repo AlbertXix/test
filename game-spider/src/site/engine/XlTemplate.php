@@ -1,6 +1,6 @@
 <?php
 
-class Template
+class XlTemplate
 {
     private $templateDir;
     private $cacheDir;
@@ -13,14 +13,14 @@ class Template
         $this->ttl = $ttl;
     }
 
-    public function render(string $template, array $data = []): void
+    public function render(string $template, array $data = [], bool $skipCache = false): void
     {
         $cacheKey = md5($template . serialize($data));
         $cacheFile = $this->cacheDir . '/' . $cacheKey . '.html';
 
         $update = isset($_GET['update']) && $_GET['update'] === 'y';
 
-        if (!$update && file_exists($cacheFile) && (time() - filemtime($cacheFile) < $this->ttl)) {
+        if (!$update && !$skipCache && file_exists($cacheFile) && (time() - filemtime($cacheFile) < $this->ttl)) {
             echo file_get_contents($cacheFile);
             return;
         }
@@ -32,7 +32,9 @@ class Template
         include $this->templateDir . '/layout.php';
         $output = ob_get_clean();
 
-        file_put_contents($cacheFile, $output);
+        if (!$skipCache) {
+            file_put_contents($cacheFile, $output);
+        }
         echo $output;
     }
 

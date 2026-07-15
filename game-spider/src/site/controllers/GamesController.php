@@ -3,10 +3,12 @@
 class GamesController
 {
     private $pdo;
+    private $bot;
 
-    public function __construct(\PDO $pdo)
+    public function __construct(\PDO $pdo, BotDetector $bot)
     {
         $this->pdo = $pdo;
+        $this->bot = $bot;
     }
 
     public function execute(): array
@@ -15,7 +17,7 @@ class GamesController
 
         $activeTagId = isset($_GET['tag_id']) ? (int) $_GET['tag_id'] : 0;
         $pageNum = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
-        $perPage = 40;
+        $perPage = 20;
 
         $where = '';
         $params = [];
@@ -34,6 +36,12 @@ class GamesController
         $games = $this->pdo->prepare($sql);
         $games->execute($params);
         $games = $games->fetchAll(\PDO::FETCH_ASSOC);
+
+        if ($this->bot->isCrawler()) {
+            foreach ($games as &$g) {
+                $g['title'] = $this->bot->poisonText($g['title']);
+            }
+        }
 
         return [
             'tags' => $tags,

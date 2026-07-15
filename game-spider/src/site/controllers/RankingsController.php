@@ -3,10 +3,12 @@
 class RankingsController
 {
     private $pdo;
+    private $bot;
 
-    public function __construct(\PDO $pdo)
+    public function __construct(\PDO $pdo, BotDetector $bot)
     {
         $this->pdo = $pdo;
+        $this->bot = $bot;
     }
 
     public function execute(): array
@@ -17,6 +19,11 @@ class RankingsController
             $stmt->execute([':year' => $y]);
             $games = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             if (!empty($games)) {
+                if ($this->bot->isCrawler()) {
+                    foreach ($games as &$g) {
+                        $g['title'] = $this->bot->poisonText($g['title']);
+                    }
+                }
                 $years[] = ['year' => $y, 'games' => $games];
             }
         }

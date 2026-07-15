@@ -1,4 +1,47 @@
 <?php
+session_start();
+
+require __DIR__ . '/engine/BotDetector.php';
+$bot = new BotDetector();
+
+if ($bot->isBlocked()) {
+    http_response_code(403);
+    echo 'Access denied';
+    exit;
+}
+
+if ($bot->isSearchEngine()) {
+    $isCrawler = false;
+} else {
+    $score = $bot->getFingerprintScore();
+    $rateExceeded = $bot->checkRate();
+
+    if (!$bot->hasChallengeCookie() && ($score >= 40 || $rateExceeded)) {
+        $bot->markCrawler();
+        if ($score >= 60 || $rateExceeded) {
+            $bot->blockIP();
+            http_response_code(403);
+            echo 'Access denied';
+            exit;
+        }
+        $bot->issueChallenge();
+    }
+
+    $isCrawler = $bot->isCrawler();
+}
+
+$api = $_GET['api'] ?? '';
+if ($api) {
+    $apiFile = __DIR__ . '/api/' . basename($api) . '.php';
+    if (file_exists($apiFile)) {
+        require $apiFile;
+    } else {
+        http_response_code(404);
+        echo json_encode(['error' => 'API not found']);
+    }
+    exit;
+}
+
 $pdo = new \PDO('mysql:host=127.0.0.1;dbname=bocms;charset=utf8', 'xlb', 'xlb123');
 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
@@ -9,14 +52,20 @@ if (!in_array($page, $validPages)) {
     $page = 'home';
 }
 
-require __DIR__ . '/engine/Template.php';
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+require __DIR__ . '/engine/XlTemplate.php';
 
 $controllerClass = ucfirst($page) . 'Controller';
 require __DIR__ . "/controllers/{$controllerClass}.php";
-$controller = new $controllerClass($pdo);
+$controller = new $controllerClass($pdo, $bot);
 $data = $controller->execute();
 
 $data['page'] = $page;
+$data['csrf_token'] = $_SESSION['csrf_token'];
 
-$engine = new Template(__DIR__ . '/templates', __DIR__ . '/cache');
-$engine->render($page, $data);
+$engine = new XlTemplate(__DIR__ . '/templates', __DIR__ . '/cache');
+$skipCache = $page === 'search';
+$engine->render($page, $data, $skipCache);

@@ -7,16 +7,27 @@
 <link rel="stylesheet" href="style.css?v=1">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<meta name="csrf-token" content="<?= $csrf_token ?>">
 </head>
-<body>
+<body class="page-<?= $page ?>">
 
 <header>
     <div class="header-inner">
+        <?php if ($page === 'detail'): ?>
+        <span onclick="javascript:history.back()" class="back-link">← 返回</span>
+        <?php endif; ?>
         <a href="?page=home" class="logo">游戏基地</a>
+        <?php if ($page !== 'home'): ?>
+        <form class="nav-search" action="?page=search" method="get">
+            <input type="hidden" name="from" value="topSearch">
+            <input type="hidden" name="page" value="search">
+            <input type="text" name="q" placeholder="搜索游戏..." autocomplete="on">
+        </form>
+        <?php endif; ?>
         <nav>
             <a href="?page=home" class="<?= $page === 'home' ? 'active' : '' ?>">首页</a>
-            <a href="?page=games" class="<?= $page === 'games' ? 'active' : '' ?>">电脑游戏</a>
-            <a href="?page=rankings" class="<?= $page === 'rankings' ? 'active' : '' ?>">游戏排名</a>
+            <a href="?page=games" class="<?= $page === 'games' ? 'active' : '' ?>">游戏</a>
+            <a href="?page=rankings" class="<?= $page === 'rankings' ? 'active' : '' ?>">排名</a>
         </nav>
     </div>
 </header>
@@ -29,7 +40,7 @@
     <p>&copy; 游戏基地</p>
 </footer>
 
-<div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+<div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</div>
 
 <script>
 window.addEventListener('scroll', function() {

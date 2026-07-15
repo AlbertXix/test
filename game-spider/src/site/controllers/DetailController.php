@@ -3,10 +3,12 @@
 class DetailController
 {
     private $pdo;
+    private $bot;
 
-    public function __construct(\PDO $pdo)
+    public function __construct(\PDO $pdo, BotDetector $bot)
     {
         $this->pdo = $pdo;
+        $this->bot = $bot;
     }
 
     public function execute(): array
@@ -24,6 +26,16 @@ class DetailController
             $game = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if ($game) {
+                if ($this->bot->isCrawler()) {
+                    $game['title'] = $this->bot->poisonText($game['title']);
+                    if (!empty($game['title_en'])) {
+                        $game['title_en'] = $this->bot->poisonText($game['title_en']);
+                    }
+                    if (!empty($game['content'])) {
+                        $game['content'] = $this->bot->poisonText($game['content']);
+                    }
+                }
+
                 $gameContent = htmlspecialchars_decode($game['content'], ENT_QUOTES);
 
                 $stmt = $this->pdo->prepare('SELECT t.tag_name FROM bo_tag t JOIN bo_game_tag gt ON gt.tag_id = t.id WHERE gt.game_id = :game_id');

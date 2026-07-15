@@ -1,4 +1,8 @@
 <section class="games-page">
+    <form class="second-search" action="?page=search" method="get">
+        <input type="hidden" name="page" value="search">
+        <input type="text" name="q" placeholder="搜索游戏名称..." autocomplete="on">
+    </form>
     <div class="tag-bar">
         <a href="?page=games" class="tag-btn <?= !$activeTagId ? 'active' : '' ?>">全部</a>
         <?php foreach ($tags as $t): ?>

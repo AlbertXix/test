@@ -1,4 +1,5 @@
 <section class="search-page">
+    <?php if (!$from): ?>
     <div class="search-header">
         <form class="search-box" action="?page=search" method="get">
             <input type="hidden" name="page" value="search">
@@ -6,7 +7,7 @@
             <button type="submit">搜索</button>
         </form>
     </div>
-
+    <?php endif; ?>
     <?php if ($q !== ''): ?>
     <p class="search-count">找到 <strong><?= count($results) ?></strong> 个与 "<?= htmlspecialchars($q) ?>" 相关的游戏</p>
 
@@ -26,6 +27,16 @@
             </div>
         </a>
         <?php endforeach; ?>
+    </div>
+
+    <div class="pagination">
+        <?php if ($pageNum > 1): ?>
+        <a href="?page=search&q=<?= urlencode($q) ?>&p=<?= $pageNum - 1 ?>">上一页</a>
+        <?php endif; ?>
+        <span>第 <?= $pageNum ?> / <?= $maxPage ?> 页</span>
+        <?php if ($pageNum < $maxPage): ?>
+        <a href="?page=search&q=<?= urlencode($q) ?>&p=<?= $pageNum + 1 ?>">下一页</a>
+        <?php endif; ?>
     </div>
     <?php endif; ?>
     <?php endif; ?>

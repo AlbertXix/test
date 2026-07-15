@@ -3,10 +3,12 @@
 class HomeController
 {
     private $pdo;
+    private $bot;
 
-    public function __construct(\PDO $pdo)
+    public function __construct(\PDO $pdo, BotDetector $bot)
     {
         $this->pdo = $pdo;
+        $this->bot = $bot;
     }
 
     public function execute(): array
@@ -19,13 +21,21 @@ class HomeController
             $stmt->execute([':tag_id' => $tag['id']]);
             $games = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             if (!empty($games)) {
+                if ($this->bot->isCrawler()) {
+                    foreach ($games as &$g) {
+                        $g['title'] = $this->bot->poisonText($g['title']);
+                    }
+                }
                 $latestByTag[] = ['tag_id' => $tag['id'], 'tag' => $tag['tag_name'], 'games' => $games];
             }
         }
 
+        $focusGames = $this->pdo->query('SELECT id, title, cover_image, cover_image_local, description FROM bo_game WHERE is_focus = 1 ORDER BY is_top DESC, id DESC LIMIT 10')->fetchAll(\PDO::FETCH_ASSOC);
+
         return [
             'tags' => $tags,
             'latestByTag' => $latestByTag,
+            'focusGames' => $focusGames,
         ];
     }
 }
