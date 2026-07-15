@@ -88,7 +88,9 @@ if ($api) {
     exit;
 }
 
-$pdo = new \PDO('mysql:host=127.0.0.1;dbname=bocms;charset=utf8', 'xlb', 'xlb123');
+$dbConfig = require __DIR__ . '/../../config/database.config.php';
+$dsn = $dbConfig['dsn'] . ';charset=' . ($dbConfig['charset'] ?? 'utf8');
+$pdo = new \PDO($dsn, $dbConfig['username'], $dbConfig['password']);
 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 $page = $_GET['page'] ?? 'home';
