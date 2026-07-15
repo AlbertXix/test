@@ -17,7 +17,7 @@ class BotDetector
     {
         $this->ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
         try {
-            $config = require __DIR__ . '/../../config/redis.config.php';
+            $config = require __DIR__ . '/../../Config/redis.config.php';
             $this->redis = new \Redis();
             $this->redis->connect($config['host'], $config['port'], $config['timeout'] ?? 2.0);
             if (!empty($config['password'])) {

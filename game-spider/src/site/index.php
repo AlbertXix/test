@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+define('SITE_PATH', dirname(__FILE__));
+define('SRC_PATH', dirname(dirname(__FILE__)));
+define('CFG_PATH', SRC_PATH . '/Config');
+
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $hostName = explode(':', $host)[0];
 $isDev = in_array($hostName, ['localhost', '127.0.0.1', '::1'], true) || (getenv('APP_ENV') ?: '') === 'dev';
@@ -88,7 +92,7 @@ if ($api) {
     exit;
 }
 
-$dbConfig = require __DIR__ . '/../../config/database.config.php';
+$dbConfig = require CFG_PATH . '/database.config.php';
 $dsn = $dbConfig['dsn'] . ';charset=' . ($dbConfig['charset'] ?? 'utf8');
 $pdo = new \PDO($dsn, $dbConfig['username'], $dbConfig['password']);
 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
