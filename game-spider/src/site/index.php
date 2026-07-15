@@ -2,6 +2,7 @@
 error_reporting(E_ALL & ~E_DEPRECATED);
 ini_set('display_errors', '1');
 date_default_timezone_set('PRC');
+set_time_limit(15);
 
 session_start();
 
