@@ -1,4 +1,8 @@
 <?php
+error_reporting(E_ALL & ~E_DEPRECATED);
+ini_set('display_errors', '1');
+date_default_timezone_set('PRC');
+
 session_start();
 
 define('SITE_PATH', dirname(__FILE__));
