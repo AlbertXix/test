@@ -3,8 +3,9 @@ session_start();
 
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $hostName = explode(':', $host)[0];
+$isDev = in_array($hostName, ['localhost', '127.0.0.1', '::1'], true) || (getenv('APP_ENV') ?: '') === 'dev';
 if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') {
-    if (!in_array($hostName, ['localhost', '127.0.0.1', '::1'], true)) {
+    if (!$isDev) {
         header('Location: https://' . $host . $_SERVER['REQUEST_URI'], true, 301);
         exit;
     }
