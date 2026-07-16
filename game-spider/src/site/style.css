@@ -892,6 +892,7 @@ footer {
     line-height: 1;
 }
 
+/* 灯箱前后切换按钮 */
 .lightbox-nav {
     position: absolute;
     top: 50%;

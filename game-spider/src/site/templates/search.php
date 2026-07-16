@@ -1,4 +1,5 @@
 <section class="search-page">
+    <!-- 搜索表单（首页跳转来时不显示） -->
     <?php if (!$from): ?>
     <div class="search-header">
         <form class="search-box" action="?page=search" method="get">
@@ -8,12 +9,14 @@
         </form>
     </div>
     <?php endif; ?>
+    <!-- 搜索结果 -->
     <?php if ($q !== ''): ?>
     <p class="search-count">找到 <strong><?= count($results) ?></strong> 个与 "<?= htmlspecialchars($q) ?>" 相关的游戏</p>
 
     <?php if (empty($results)): ?>
     <p class="search-empty">未找到相关游戏，请尝试其他关键词</p>
     <?php else: ?>
+    <!-- 结果列表 -->
     <div class="game-grid four-col">
         <?php foreach ($results as $g): ?>
         <a href="?page=detail&id=<?= $g['id'] ?>" class="game-card">
@@ -29,6 +32,7 @@
         <?php endforeach; ?>
     </div>
 
+    <!-- 搜索结果分页 -->
     <div class="pagination">
         <?php if ($pageNum > 1): ?>
         <a href="?page=search&q=<?= urlencode($q) ?>&p=<?= $pageNum - 1 ?>">上一页</a>

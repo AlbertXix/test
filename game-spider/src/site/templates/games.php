@@ -1,8 +1,10 @@
 <section class="games-page">
+    <!-- 移动端搜索（桌面端在 header 中） -->
     <form class="second-search" action="?page=search" method="get">
         <input type="hidden" name="page" value="search">
         <input type="text" name="q" placeholder="搜索游戏名称..." autocomplete="on">
     </form>
+    <!-- 标签筛选栏 -->
     <div class="tag-bar">
         <a href="?page=games" class="tag-btn <?= !$activeTagId ? 'active' : '' ?>">全部</a>
         <?php foreach ($tags as $t): ?>
@@ -10,6 +12,7 @@
         <?php endforeach; ?>
     </div>
 
+    <!-- 游戏卡片列表 -->
     <div class="game-grid four-col">
         <?php foreach ($games as $g): ?>
         <a href="?page=detail&id=<?= $g['id'] ?>" class="game-card">
@@ -25,6 +28,7 @@
         <?php endforeach; ?>
     </div>
 
+    <!-- 分页导航 -->
     <div class="pagination">
         <?php if ($pageNum > 1): ?>
         <a href="?page=games&p=<?= $pageNum - 1 ?>&tag_id=<?= $activeTagId ?>">上一页</a>

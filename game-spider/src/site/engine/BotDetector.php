@@ -1,18 +1,21 @@
 <?php
 
+/**
+ * 爬虫检测器 — 通过指纹评分、速率限制、JS Challenge、数据投毒等方式识别并拦截爬虫
+ */
 class BotDetector
 {
+    /** @var \Redis|null Redis 实例，连接失败时为 null */
     private $redis;
+    /** @var string 客户端 IP 地址 */
     private $ip;
 
+    /** @var int 速率限制：窗口内最大请求数 */
     private $rateLimit = 60;
+    /** @var int 速率限制：时间窗口（秒） */
     private $rateWindow = 60;
 
-    private static $searchEngines = [
-        'Googlebot', 'Bingbot', 'Slurp', 'DuckDuckBot', 'Baiduspider',
-        'YandexBot', 'Sogou', 'Exabot', 'facebot', 'ia_archiver',
-    ];
-
+    /** 构造函数：获取客户端 IP，连接 Redis */
     public function __construct()
     {
         $this->ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
@@ -31,23 +34,17 @@ class BotDetector
         }
     }
 
-    public function isSearchEngine(): bool
-    {
-        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        foreach (self::$searchEngines as $bot) {
-            if (stripos($ua, $bot) !== false) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /** 检查当前 IP 是否已被封禁 */
     public function isBlocked(): bool
     {
         if (!$this->redis) return false;
         return (bool) $this->redis->exists("blocked:{$this->ip}");
     }
 
+    /**
+     * 指纹评分：根据请求头缺失情况、UA 特征等计算爬虫嫌疑分数
+     * @return int 0~100+，越高越可疑
+     */
     public function getFingerprintScore(): int
     {
         $score = 0;
@@ -68,6 +65,7 @@ class BotDetector
         return $score;
     }
 
+    /** 速率检查：当前 IP 在窗口期内是否超限 */
     public function checkRate(): bool
     {
         if (!$this->redis) return false;
@@ -79,11 +77,13 @@ class BotDetector
         return $count > $this->rateLimit;
     }
 
+    /** 是否已通过 JS Challenge 验证（Session 标记） */
     public function hasPassedChallenge(): bool
     {
         return !empty($_SESSION['challenge_passed']);
     }
 
+    /** 验证 Challenge Token 是否有效（Redis 中存储的 IP 匹配） */
     public function validateChallengeToken(string $token): bool
     {
         if (!$token || !$this->redis) return false;
@@ -94,11 +94,13 @@ class BotDetector
         return $stored === $this->ip;
     }
 
+    /** 标记当前 Session 已通过 Challenge 验证 */
     public function markPassed(): void
     {
         $_SESSION['challenge_passed'] = true;
     }
 
+    /** 下发 JS Challenge 页面：生成 token，渲染自动提交的表单 */
     public function issueChallenge(): never
     {
         $token = bin2hex(random_bytes(16));
@@ -138,25 +140,31 @@ p { color: #666; font-size: 14px; line-height: 1.6; }
         exit;
     }
 
+    /** 标记当前 IP 为爬虫（Redis，1 小时过期） */
     public function markCrawler(): void
     {
         if (!$this->redis) return;
         $this->redis->setex("crawler:{$this->ip}", 3600, '1');
     }
 
+    /** 封禁当前 IP（默认 24 小时） */
     public function blockIP(int $duration = 86400): void
     {
         if (!$this->redis) return;
         $this->redis->setex("blocked:{$this->ip}", $duration, '1');
     }
 
+    /** 当前 IP 是否已被标记为爬虫 */
     public function isCrawler(): bool
     {
-        if ($this->isSearchEngine()) return false;
         if (!$this->redis) return false;
         return (bool) $this->redis->get("crawler:{$this->ip}");
     }
 
+    /**
+     * 报告 SQL 注入行为：累计计数，>= 2 次则永久封禁
+     * @param Logger $logger 日志记录器
+     */
     public function reportSqlInjection(Logger $logger): void
     {
         if (!$this->redis) return;
@@ -169,9 +177,12 @@ p { color: #666; font-size: 14px; line-height: 1.6; }
         }
     }
 
+    /**
+     * 综合判断当前请求是否来自真人（高指纹/超限则弹 Challenge）
+     * @return bool true=放行，false=需要验证
+     */
     public function isHuman(): bool
     {
-        if ($this->isSearchEngine()) return true;
         $score = $this->getFingerprintScore();
         $rateExceeded = $this->checkRate();
         $hasChallenge = $this->hasPassedChallenge();
@@ -189,6 +200,11 @@ p { color: #666; font-size: 14px; line-height: 1.6; }
         return true;
     }
 
+    /**
+     * 数据投毒：打乱文本中间字符顺序（首尾保留），污染爬虫抓取到的数据
+     * @param string $text 原始文本
+     * @return string 打乱后的文本
+     */
     public function poisonText(string $text): string
     {
         $chars = mb_str_split($text);

@@ -1,3 +1,4 @@
+<!-- Hero 区域：星空背景 + 雷达 + 搜索框 -->
 <section class="hero" id="hero">
     <div class="stars" id="stars"></div>
     <div class="shooting-star" id="shootingStar1"></div>
@@ -19,6 +20,7 @@
     </div>
 </section>
 
+<!-- 生成星星粒子 + 鼠标视差效果 -->
 <script>
 (function() {
     var hero = document.getElementById('hero');
@@ -67,6 +69,7 @@
 })();
 </script>
 
+<!-- 焦点图轮播（Swiper） -->
 <?php if (!empty($focusGames)): ?>
 <div class="focus-slider">
     <div class="swiper focusSwiper">
@@ -85,6 +88,7 @@
     </div>
 </div>
 
+<!-- Swiper 初始化配置 -->
 <script>
 new Swiper('.focusSwiper', {
     slidesPerView: 6,
@@ -105,6 +109,7 @@ new Swiper('.focusSwiper', {
 </script>
 <?php endif; ?>
 
+<!-- 分类游戏网格 -->
 <div class="category-grid">
 <?php foreach ($latestByTag as $group): ?>
 <section class="category-section">

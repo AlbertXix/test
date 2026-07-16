@@ -3,6 +3,7 @@
 <?php else: ?>
 
 <section class="detail-page">
+    <!-- 游戏基本信息头 -->
     <div class="detail-header">
         <div class="detail-cover" style="background-image: url('<?= htmlspecialchars($game['cover_image'] ?: $game['cover_image_local'] ?: '/Public/up/nopic.jpg') ?>')"></div>
         <div class="detail-info">
@@ -22,6 +23,7 @@
         </div>
     </div>
 
+    <!-- 截图轮播 -->
     <?php if (!empty($screenshots)): ?>
     <div class="screenshot-gallery">
         <h2>游戏截图</h2>
@@ -41,6 +43,7 @@
         </div>
     </div>
 
+    <!-- 截图灯箱：点击大图 + 前后切换 + 键盘导航 -->
     <div class="lightbox" id="lightbox">
         <span class="lightbox-close">&times;</span>
         <span class="lightbox-nav lightbox-prev" id="lightboxPrev">&#10094;</span>
@@ -49,6 +52,7 @@
     </div>
 
     <script>
+    // 初始化截图 Swiper
     new Swiper('.screenshotSwiper', {
         slidesPerView: 1,
         spaceBetween: 16,
@@ -60,6 +64,7 @@
         }
     });
 
+    // 灯箱图片切换逻辑
     (function() {
         var items = document.querySelectorAll('.screenshot-item');
         var lightbox = document.getElementById('lightbox');
@@ -68,11 +73,13 @@
         var nextBtn = document.getElementById('lightboxNext');
         var currentIndex = -1;
 
+        // 更新前后按钮显隐
         function updateNav() {
             prevBtn.style.display = currentIndex > 0 ? '' : 'none';
             nextBtn.style.display = currentIndex < items.length - 1 ? '' : 'none';
         }
 
+        // 显示指定索引的大图
         function showImage(index) {
             if (index < 0 || index >= items.length) return;
             currentIndex = index;
@@ -80,6 +87,7 @@
             updateNav();
         }
 
+        // 点击缩略图打开灯箱
         items.forEach(function(item, idx) {
             item.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -88,6 +96,7 @@
             });
         });
 
+        // 前后切换按钮
         prevBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             showImage(currentIndex - 1);
@@ -98,10 +107,12 @@
             showImage(currentIndex + 1);
         });
 
+        // 点击背景关闭
         lightbox.addEventListener('click', function() {
             this.style.display = 'none';
         });
 
+        // 键盘导航：← → ESC
         document.addEventListener('keydown', function(e) {
             if (lightbox.style.display !== 'flex') return;
             if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
@@ -112,12 +123,14 @@
     </script>
     <?php endif; ?>
 
+    <!-- 游戏详细介绍内容 -->
     <?php if ($game['content']): ?>
     <div class="game-content">
         <div class="content-body"><?= $gameContent ?></div>
     </div>
     <?php endif; ?>
 
+    <!-- 下载方式列表 -->
     <?php
     $downloads = [];
     if ($game['xunlei_url']) $downloads[] = ['key' => 'xunlei', 'label' => '迅雷云盘', 'url' => $game['xunlei_url']];
@@ -135,6 +148,7 @@
         </div>
     </div>
 
+    <!-- 二维码弹窗 -->
     <div class="qr-modal" id="qrModal">
         <div class="qr-modal-content">
             <span class="qr-modal-close">&times;</span>
@@ -144,6 +158,7 @@
     </div>
 
     <script>
+    // 下载按钮 → AJAX 请求生成二维码
     var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     var qrModal = document.getElementById('qrModal');
     var qrImage = document.getElementById('qrImage');

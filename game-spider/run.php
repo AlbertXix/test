@@ -1,4 +1,5 @@
 <?php
+// Game Spider — 采集器入口：支持测试模式和全量抓取，输出 JSON 或写入数据库
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -9,6 +10,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\ErrorHandler;
 
+// 初始化 Monolog 日志
 $logDir = __DIR__ . '/logs';
 if (!is_dir($logDir)) mkdir($logDir, 0755, true);
 $logger = new Logger('spider');
@@ -29,6 +31,7 @@ echo "========================================\n";
 echo "  Game Spider - Web Scraper\n";
 echo "========================================\n\n";
 
+// DI 容器注册
 $container = new Container();
 
 $container->singleton(PageFetcher::class, fn() => new PageFetcher());
@@ -51,6 +54,7 @@ $container->singleton('gxkgame', function ($c) {
 
 $mode = $argv[1] ?? 'help';
 
+// 测试模式：抓取指定站点、分类的首页 + 前 3 条详情
 if ($mode === 'test') {
     $site = $argv[2] ?? '';
     $category = $argv[3] ?? '';
@@ -70,6 +74,7 @@ if ($mode === 'test') {
     $collector = $container->get($site);
 
     if ($collector instanceof DanjipaiCollector) {
+        // 单页采集器：抓取 HTML 列表页，提取详情 URL
         $url = $collector->getListUrl($category, 1);
         echo "Testing {$site} - category: {$category}\n";
         echo "Fetching list: {$url}\n";
@@ -96,6 +101,7 @@ if ($mode === 'test') {
             }
         }
     } elseif ($collector instanceof GxkgameCollector) {
+        // API 采集器：抓取 JSON 列表，提取详情
         $url = $collector->getListUrl($category, 1);
         echo "Testing {$site} - category: {$category}\n";
         echo "Fetching list: {$url}\n";
@@ -134,6 +140,7 @@ if ($mode === 'test') {
             echo "  Screenshots: " . (empty($screenshots) ? '(none)' : '[' . implode(', ', $screenshots) . ']') . "\n";
         }
     }
+// 全量抓取模式
 } elseif ($mode === 'scrape') {
     $site = $argv[2] ?? 'all';
     $outputTarget = $argv[3] ?? 'output';
@@ -143,6 +150,7 @@ if ($mode === 'test') {
     $endPage = null;
     $category = null;
 
+    // 解析可选参数
     for ($i = 2; $i < count($argv); $i++) {
         if ($argv[$i] === '--start-page' && isset($argv[$i + 1])) {
             $startPage = (int) $argv[$i + 1];
@@ -170,6 +178,7 @@ if ($mode === 'test') {
 
     $sites = $site === 'all' ? ['danjipai', 'gxkgame'] : [$site];
 
+    // 数据库导出模式
     $exporter = null;
     if ($outputTarget === 'db') {
         $dbConfig = require __DIR__ . '/src/Config/database.config.php';
@@ -198,6 +207,7 @@ if ($mode === 'test') {
         }
         $startTime = microtime(true);
 
+        // 逐页抓取并提交
         if ($exporter !== null) {
             $pdo->beginTransaction();
             $pageHandler = function ($pageItems) use ($exporter, $pdo) {

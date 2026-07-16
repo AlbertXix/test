@@ -1,8 +1,13 @@
 <?php
 
+/**
+ * 搜索控制器 — 按游戏名称模糊搜索，支持分页
+ */
 class SearchController
 {
+    /** @var \PDO 数据库连接 */
     private $pdo;
+    /** @var BotDetector 爬虫检测器 */
     private $bot;
 
     public function __construct(\PDO $pdo, BotDetector $bot)
@@ -11,6 +16,7 @@ class SearchController
         $this->bot = $bot;
     }
 
+    /** 执行控制器逻辑，返回模板数据 */
     public function execute(): array
     {
         $q = isset($_GET['q']) ? trim($_GET['q']) : '';
@@ -20,6 +26,7 @@ class SearchController
         $results = [];
 
         if ($q !== '') {
+            // 模糊搜索 + 可见性过滤
             $like = '%' . $q . '%';
 
             $countStmt = $this->pdo->prepare("SELECT COUNT(DISTINCT g.id) FROM bo_game g WHERE g.title LIKE :q AND g.visible = 1");

@@ -2,6 +2,7 @@
     <h1>游戏排名</h1>
     <p class="subtitle">历年最佳游戏回顾</p>
 
+    <!-- 按年份分组展示排行榜 -->
     <?php foreach ($years as $group): ?>
     <div class="year-block">
         <h2><?= $group['year'] ?> 年度最佳</h2>

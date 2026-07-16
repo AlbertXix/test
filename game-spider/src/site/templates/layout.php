@@ -11,12 +11,14 @@
 </head>
 <body class="page-<?= $page ?>">
 
+<!-- 顶部导航栏 -->
 <header>
     <div class="header-inner">
         <?php if ($page === 'detail'): ?>
         <span onclick="javascript:history.back()" class="back-link">← 返回</span>
         <?php endif; ?>
         <a href="?page=home" class="logo">游戏基地</a>
+        <!-- 桌面端搜索框（首页不显示） -->
         <?php if ($page !== 'home'): ?>
         <form class="nav-search" action="?page=search" method="get">
             <input type="hidden" name="from" value="topSearch">
@@ -32,6 +34,7 @@
     </div>
 </header>
 
+<!-- 主体内容 -->
 <main>
 <?= $pageContent ?>
 </main>
@@ -40,6 +43,7 @@
     <p>&copy; 游戏基地</p>
 </footer>
 
+<!-- 回到顶部按钮 -->
 <div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</div>
 
 <script>
