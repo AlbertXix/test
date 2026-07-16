@@ -892,6 +892,32 @@ footer {
     line-height: 1;
 }
 
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 40px;
+    color: #fff;
+    cursor: pointer;
+    padding: 16px;
+    user-select: none;
+    opacity: 0.6;
+    transition: opacity .2s;
+    z-index: 10;
+}
+
+.lightbox-nav:hover {
+    opacity: 1;
+}
+
+.lightbox-prev {
+    left: 20px;
+}
+
+.lightbox-next {
+    right: 20px;
+}
+
 .game-content .content-body {
     font-size: 14px;
     line-height: 1.8;

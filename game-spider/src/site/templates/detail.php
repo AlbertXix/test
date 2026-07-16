@@ -43,6 +43,8 @@
 
     <div class="lightbox" id="lightbox">
         <span class="lightbox-close">&times;</span>
+        <span class="lightbox-nav lightbox-prev" id="lightboxPrev">&#10094;</span>
+        <span class="lightbox-nav lightbox-next" id="lightboxNext">&#10095;</span>
         <img class="lightbox-img" id="lightboxImg">
     </div>
 
@@ -58,17 +60,55 @@
         }
     });
 
-    var lightbox = document.getElementById('lightbox');
-    var lightboxImg = document.getElementById('lightboxImg');
-    document.querySelectorAll('.screenshot-item').forEach(function(item) {
-        item.addEventListener('click', function() {
-            lightboxImg.src = this.dataset.src;
-            lightbox.style.display = 'flex';
+    (function() {
+        var items = document.querySelectorAll('.screenshot-item');
+        var lightbox = document.getElementById('lightbox');
+        var lightboxImg = document.getElementById('lightboxImg');
+        var prevBtn = document.getElementById('lightboxPrev');
+        var nextBtn = document.getElementById('lightboxNext');
+        var currentIndex = -1;
+
+        function updateNav() {
+            prevBtn.style.display = currentIndex > 0 ? '' : 'none';
+            nextBtn.style.display = currentIndex < items.length - 1 ? '' : 'none';
+        }
+
+        function showImage(index) {
+            if (index < 0 || index >= items.length) return;
+            currentIndex = index;
+            lightboxImg.src = items[index].dataset.src;
+            updateNav();
+        }
+
+        items.forEach(function(item, idx) {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showImage(idx);
+                lightbox.style.display = 'flex';
+            });
         });
-    });
-    lightbox.addEventListener('click', function() {
-        this.style.display = 'none';
-    });
+
+        prevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showImage(currentIndex - 1);
+        });
+
+        nextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showImage(currentIndex + 1);
+        });
+
+        lightbox.addEventListener('click', function() {
+            this.style.display = 'none';
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (lightbox.style.display !== 'flex') return;
+            if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+            else if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+            else if (e.key === 'Escape') lightbox.style.display = 'none';
+        });
+    })();
     </script>
     <?php endif; ?>
 

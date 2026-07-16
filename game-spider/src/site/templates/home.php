@@ -89,17 +89,17 @@
 new Swiper('.focusSwiper', {
     slidesPerView: 6,
     spaceBetween: 12,
-    slidesOffsetBefore: 60,
+    slidesOffsetBefore: 0,
     slidesOffsetAfter: 60,
     loop: true,
     autoplay: { delay: 4000, disableOnInteraction: false },
     navigation: { nextEl: '.focusSwiper .swiper-button-next', prevEl: '.focusSwiper .swiper-button-prev' },
     pagination: { el: '.focusSwiper .swiper-pagination', clickable: true },
     breakpoints: {
-        0: { slidesPerView: 2, slidesOffsetBefore: 20, slidesOffsetAfter: 20 },
-        500: { slidesPerView: 3, slidesOffsetBefore: 30, slidesOffsetAfter: 30 },
-        800: { slidesPerView: 4, slidesOffsetBefore: 40, slidesOffsetAfter: 40 },
-        1100: { slidesPerView: 6, slidesOffsetBefore: 60, slidesOffsetAfter: 60 }
+        0: { slidesPerView: 2, slidesOffsetBefore: 0, slidesOffsetAfter: 20 },
+        500: { slidesPerView: 3, slidesOffsetBefore: 0, slidesOffsetAfter: 30 },
+        800: { slidesPerView: 4, slidesOffsetBefore: 0, slidesOffsetAfter: 40 },
+        1100: { slidesPerView: 6, slidesOffsetBefore: 0, slidesOffsetAfter: 60 }
     }
 });
 </script>

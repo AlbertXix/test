@@ -9,7 +9,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\ErrorHandler;
 
-$logDir = __DIR__ . '/var/log/game-spider';
+$logDir = __DIR__ . '/logs';
 if (!is_dir($logDir)) mkdir($logDir, 0755, true);
 $logger = new Logger('spider');
 $logger->pushHandler(new StreamHandler($logDir . '/spider.log', Logger::DEBUG));
