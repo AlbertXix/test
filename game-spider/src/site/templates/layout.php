@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>游戏基地</title>
+<meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? '') ?>">
+<meta name="description" content="<?= htmlspecialchars($meta_description ?? '') ?>">
 <link rel="stylesheet" href="style.css?v=1">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

@@ -35,6 +35,12 @@ class RankingsController
             }
         }
 
-        return ['years' => $years];
+        return [
+            'years' => $years,
+            'meta' => [
+                'keywords' => '历年游戏排名,最受欢迎的游戏',
+                'description' => '历年游戏排名,最受欢迎的游戏',
+            ]
+        ];
     }
 }

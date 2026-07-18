@@ -63,6 +63,10 @@ class DetailController
             'gameContent' => $gameContent,
             'gameTags' => $gameTags,
             'screenshots' => $screenshots,
+            'meta' => [
+                'keywords' => $game['keywords'],
+                'description' => $game['description'],
+            ]
         ];
     }
 }

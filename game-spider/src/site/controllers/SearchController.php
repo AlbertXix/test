@@ -59,6 +59,10 @@ class SearchController
             'pageNum' => $pageNum,
             'maxPage' => max(1, ceil($total / $perPage)),
             'total' => $total,
+            'meta' => [
+                'keywords' => '搜索结果',
+                'description' => '游戏搜索结果页',
+            ]
         ];
     }
 }

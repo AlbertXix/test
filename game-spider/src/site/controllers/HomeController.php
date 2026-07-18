@@ -46,6 +46,10 @@ class HomeController
             'tags' => $tags,
             'latestByTag' => $latestByTag,
             'focusGames' => $focusGames,
+            'meta' => [
+                'keywords' => '单机游戏下载，电脑游戏下载，单机游戏大全, PC游戏下载',
+                'description' => '单机游戏下载，电脑游戏下载，单机游戏大全, PC游戏下载',
+            ]
         ];
     }
 }

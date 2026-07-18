@@ -21,6 +21,8 @@ class GamesController
     {
         // 查询所有标签
         $tags = $this->pdo->query('SELECT id, tag_name FROM bo_tag ORDER BY id')->fetchAll(\PDO::FETCH_ASSOC);
+        $tagNames = implode(',', array_column($tags, 'tag_name'));
+        $tags = array_combine(array_column($tags, 'id'), $tags);
 
         // 获取筛选参数和分页参数
         $activeTagId = isset($_GET['tag_id']) ? (int) $_GET['tag_id'] : 0;
@@ -48,6 +50,8 @@ class GamesController
         $games = $this->pdo->prepare($sql);
         $games->execute($params);
         $games = $games->fetchAll(\PDO::FETCH_ASSOC);
+        // 当前标签分页下的游戏标题
+        $curTagGameTitles = implode(',', array_column($games, 'title'));
 
         if ($this->bot->isCrawler()) {
             foreach ($games as &$g) {
@@ -55,12 +59,20 @@ class GamesController
             }
         }
 
+        $keywords = $activeTagId ? '单机游戏下载分类: ' . $tags[$activeTagId]['tag_name'] : $tagNames;
+        $description = $activeTagId ? $tags[$activeTagId]['tag_name'] . '最新游戏:'  . $curTagGameTitles 
+            : '单机游戏下载，单机游戏分类标签：' . $tagNames;
+
         return [
             'tags' => $tags,
             'activeTagId' => $activeTagId,
             'games' => $games,
             'pageNum' => $pageNum,
             'maxPage' => $maxPage,
+            'meta' => [
+                'keywords' => $keywords,
+                'description' => $description
+            ]
         ];
     }
 }
