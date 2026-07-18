@@ -16,7 +16,7 @@
     <div class="game-grid four-col">
         <?php foreach ($games as $g): ?>
         <a href="?page=detail&id=<?= $g['id'] ?>" class="game-card">
-            <div class="game-cover" style="background-image: url('<?= ($g['cover_image'] ?: $g['cover_image_local']) ?: '/Public/up/nopic.jpg' ?>')"></div>
+            <div class="game-cover" style="background-image: url('<?= ($g['cover_image_local'] ?: $g['cover_image']) ?: '/Public/up/nopic.jpg' ?>')"></div>
             <div class="game-info">
                 <h3><?= htmlspecialchars_decode(mb_substr($g['title'], 0, 50), ENT_QUOTES) ?></h3>
                 <div class="game-meta">

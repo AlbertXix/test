@@ -5,7 +5,7 @@
 <section class="detail-page">
     <!-- 游戏基本信息头 -->
     <div class="detail-header">
-        <div class="detail-cover" style="background-image: url('<?= htmlspecialchars($game['cover_image'] ?: $game['cover_image_local'] ?: '/Public/up/nopic.jpg') ?>')"></div>
+        <div class="detail-cover" style="background-image: url('<?= htmlspecialchars($game['cover_image_local'] ?: $game['cover_image'] ?: '/Public/up/nopic.jpg') ?>')"></div>
         <div class="detail-info">
             <h1><?= htmlspecialchars($game['title']) ?></h1>
             <div class="detail-meta">
@@ -31,8 +31,8 @@
             <div class="swiper-wrapper">
                 <?php foreach ($screenshots as $s): ?>
                 <div class="swiper-slide">
-                    <div class="screenshot-item" data-src="<?= htmlspecialchars($s['image_url'] ?: $s['image_local']) ?>">
-                        <img src="<?= htmlspecialchars($s['image_url'] ?: $s['image_local']) ?>" alt="游戏截图" loading="lazy">
+                    <div class="screenshot-item" data-src="<?= htmlspecialchars($s['image_local'] ?: $s['image_url']) ?>">
+                        <img src="<?= htmlspecialchars($s['image_local'] ?: $s['image_url']) ?>" alt="游戏截图" loading="lazy">
                     </div>
                 </div>
                 <?php endforeach; ?>
