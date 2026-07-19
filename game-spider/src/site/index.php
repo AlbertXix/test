@@ -117,6 +117,20 @@ $dsn = $dbConfig['dsn'] . ';charset=' . ($dbConfig['charset'] ?? 'utf8');
 $pdo = new \PDO($dsn, $dbConfig['username'], $dbConfig['password']);
 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
+// 短网址跳转：?s=CODE
+if (isset($_GET['s'])) {
+    require __DIR__ . '/engine/ShortUrl.php';
+    $shortUrl = new ShortUrl($pdo);
+    $target = $shortUrl->resolve($_GET['s']);
+    if ($target) {
+        header('Location: ' . $target, true, 302);
+    } else {
+        http_response_code(404);
+        echo 'Short URL not found';
+    }
+    exit;
+}
+
 // 页面路由
 $page = $_GET['page'] ?? 'home';
 $validPages = ['home', 'games', 'rankings', 'detail', 'search'];

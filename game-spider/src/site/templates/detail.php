@@ -143,7 +143,7 @@
         <h2>选择下载方式</h2>
         <div class="download-buttons">
             <?php foreach ($downloads as $d): ?>
-            <button class="download-btn" data-url="<?= htmlspecialchars($d['url']) ?>"><?= htmlspecialchars($d['label']) ?></button>
+            <button class="download-btn" data-game-id="<?= $game['id'] ?>" data-type="<?= $d['key'] ?>"><?= htmlspecialchars($d['label']) ?></button>
             <?php endforeach; ?>
         </div>
     </div>
@@ -165,7 +165,8 @@
 
     document.querySelectorAll('.download-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            var url = this.dataset.url;
+            var gameId = this.dataset.gameId;
+            var type = this.dataset.type;
             qrImage.src = '';
             qrModal.style.display = 'flex';
 
@@ -179,7 +180,7 @@
                     qrImage.src = resp.qr;
                 }
             };
-            xhr.send('url=' + encodeURIComponent(url));
+            xhr.send('game_id=' + gameId + '&type=' + encodeURIComponent(type));
         });
     });
 
