@@ -6,7 +6,7 @@
 <title>游戏基地</title>
 <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? '') ?>">
 <meta name="description" content="<?= htmlspecialchars($meta_description ?? '') ?>">
-<link rel="stylesheet" href="Public/css/style.css?v=1">
+<link rel="stylesheet" href="Public/css/style<?= $isDev ? '' : '.min' ?>.css?v=1">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <meta name="csrf-token" content="<?= $csrf_token ?>">
@@ -48,6 +48,6 @@
 <!-- 回到顶部按钮 -->
 <div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</div>
 
-<script src="Public/js/layout.js"></script>
+<script src="Public/js/layout<?= $isDev ? '' : '.min' ?>.js"></script>
 </body>
 </html>

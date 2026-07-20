@@ -41,7 +41,7 @@
 
 <?php endif; ?>
 
-<script src="Public/js/home.js"></script>
+<script src="Public/js/home<?= $isDev ? '' : '.min' ?>.js"></script>
 
 <!-- 分类游戏网格 -->
 <div class="category-grid">

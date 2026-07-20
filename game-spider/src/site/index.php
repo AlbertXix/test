@@ -155,6 +155,7 @@ $data['page'] = $page;
 $data['csrf_token'] = $_SESSION['csrf_token'];
 $data['meta_keywords'] = $data['meta']['keywords'] ?? '';
 $data['meta_description'] = $data['meta']['description'] ?? '';
+$data['isDev'] = $isDev;
 
 // 模板渲染（搜索页面不缓存）
 $engine = new XlTemplate(__DIR__ . '/templates', __DIR__ . '/cache');
