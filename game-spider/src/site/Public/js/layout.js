@@ -1,0 +1,4 @@
+// 回到顶部
+window.addEventListener('scroll', function() {
+    document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 300);
+});
